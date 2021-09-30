@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: dd
+server:
+  tomcat:
+    accept-count: 10
+  port: 8080

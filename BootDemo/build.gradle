@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation('com.github.pagehelper:pagehelper:5.1.2')
+    implementation('org.webjars:jquery:2.0.3-1')
+    implementation('org.webjars:sockjs-client:0.3.4')
+    implementation 'org.webjars:stomp-websocket:2.3.0'
+    implementation 'org.webjars:jquery:2.0.3-1'
+    implementation 'org.webjars:sockjs-client:0.3.4'
+    implementation 'org.springframework:spring-messaging:5.2.6.RELEASE'
+    implementation 'org.springframework:spring-websocket:5.2.6.RELEASE'
+    implementation 'org.freemarker:freemarker:2.3.30'
+    implementation 'com.alibaba:easyexcel:2.2.6'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}

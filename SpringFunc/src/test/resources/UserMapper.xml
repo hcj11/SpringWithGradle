@@ -1,0 +1,34 @@
+    <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD com.Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Mapper.UserMapper"> <!--mapper  -->
+    <resultMap type="user" id="userList">
+        <!-- type为返回列表元素的类全名或别名 -->
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="enabled" property="enabled"/>
+        <result column="context" property="context"
+                typeHandler="com.Config.MyTypeHandler"/>
+    </resultMap>
+    <insert id="insertBatch">
+        insert into users(username) values
+        <foreach collection="userDtoList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </insert>
+
+    <insert id="insert" parameterType="user">
+        insert into users(username,
+                          password, enabled, context)
+        values (#{username}, #{password}, #{enabled}, #{context})
+    </insert>
+    <select id="selectUser" parameterType="String" resultType="user">
+        SELECT *
+        FROM users
+        WHERE username = #{username}
+    </select>
+    <select id="selectAll" resultMap="userList">
+        SELECT *
+        FROM users
+    </select>
+</mapper>

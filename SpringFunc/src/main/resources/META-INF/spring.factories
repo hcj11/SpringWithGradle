@@ -1,0 +1,8 @@
+# Bootstrap components
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+cloud.bootstrap.TestBootstrapConfiguration,\
+cloud.bootstrap.TestHigherPriorityBootstrapConfiguration
+
+
+org.springframework.boot.env.EnvironmentPostProcessor=\
+cloud.bootstrap.TestConditionalEnvironmentPostProcessor

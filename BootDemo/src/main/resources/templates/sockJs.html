@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<!--    <script th:srchttp://cdn.sockjs.org/sockjs-0.3.min.js"></script>-->
+<!--<script th:src="@{/webjars/sockjs-client/0.3.4/sockjs.js}"></script>-->
+    <script src="sockjs.js"></script>
+    <script>
+        var url = 'http://127.0.0.1:8080/tom';
+        var sock = new SockJS(url);
+        sock.onopen = function (e) {
+            console.info('open: ' + e)
+            sayMarry("hello marry!!!");
+        };
+        sock.onmessage = function (e) {
+            console.info(e.data); // e.data => []
+            setTimeout(function () {
+                sayMarry("tom client send msg")
+            },2000)
+        };
+        sock.onclose = function (e) {
+            console.info('close: ' + e.data)
+        };
+
+        function sayMarry(data) {
+            sock.send(data)
+        };
+    </script>
+</head>
+<body>
+</body>
+</html>

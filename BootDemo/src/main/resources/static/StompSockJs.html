@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="sockjs.js"></script>
+    <script src="stomp.js"></script>
+    <script>
+        var url = 'http://127.0.0.1:8080/stomp';
+        var sock = new SockJS(url);
+        var client = Stomp.over(sock);
+        var s = JSON.stringify({"message":"do you get message?"});
+        client.connect("guest","guest",function (frame) {
+            client.send("/msg",{},s)
+        })
+    </script>
+</head>
+<body>
+</body>
+</html>
