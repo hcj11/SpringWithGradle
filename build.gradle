@@ -1,0 +1,132 @@
+buildscript {
+    repositories {
+        mavenLocal({ print(it) })
+        gradlePluginPortal()
+        mavenCentral()
+        maven { url 'https://repo.spring.io/plugins-snapshot' }
+    }
+    dependencies {
+        classpath 'io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE'
+        classpath group: 'org.apache.maven', name: 'maven-plugin-api', version: '3.0'
+        classpath('org.springframework.boot:spring-boot-maven-plugin:2.1.3.RELEASE')
+    }
+}
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '2.5.0'
+}
+jar {
+    enabled = false
+}
+
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+buildDir = 'out'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://repo.spring.io/plugins-snapshot' }
+}
+
+
+tasks.withType(JavaCompile) {
+    // -xlinit=check
+    options.setCompilerArgs(Arrays.asList('-proc:none'))
+    doFirst {
+        println "AnnotationProcessorPath for $name is ${options.getAnnotationProcessorPath().getFiles()}"
+    }
+}
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
+}
+// Éú³Éjar gradle repack
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenLocal()
+    }
+
+    dependencies {
+        implementation enforcedPlatform('org.springframework.boot:spring-boot-dependencies:2.3.8.RELEASE')
+        implementation enforcedPlatform('org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR4')
+// <---> test + mock
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+        annotationProcessor 'org.projectlombok:lombok:1.18.12'
+        testCompileOnly 'org.projectlombok:lombok:1.18.12'
+        compileOnly 'org.projectlombok:lombok:1.18.12'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+        testImplementation 'junit:junit:4.12'
+        testImplementation 'org.springframework:spring-test:5.2.6.RELEASE'
+        implementation 'org.springframework.boot:spring-boot-test:2.2.2.RELEASE'
+        testImplementation 'org.mockito:mockito-all:1.10.19'
+// aop
+        implementation 'org.ow2.asm:asm:7.2'
+        implementation 'cglib:cglib:3.3.0'
+        implementation 'org.aspectj:aspectjweaver:1.9.5'
+        implementation 'org.assertj:assertj-core:3.15.0'
+        implementation 'io.jsonwebtoken:jjwt:0.7.0'
+        implementation 'com.alibaba:fastjson:1.2.67'
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.2'
+// collections
+        implementation 'org.apache.commons:commons-collections4:4.1'
+        implementation 'commons-cli:commons-cli:1.2'
+        implementation 'com.google.guava:guava:29.0-jre'
+        implementation 'org.apache.commons:commons-lang3:3.10'
+        implementation 'commons-beanutils:commons-beanutils:1.8.0'
+// sping
+        implementation 'org.springframework:spring-jdbc:5.2.6.RELEASE'
+        implementation 'org.springframework:spring-web:5.2.6.RELEASE'
+        implementation 'org.springframework:spring-webmvc:5.2.6.RELEASE'
+        implementation 'org.springframework:spring-beans:5.2.6.RELEASE'
+        implementation 'org.springframework:spring-core:5.2.6.RELEASE'
+        implementation 'org.springframework:spring-context:5.2.6.RELEASE'
+        implementation 'org.springframework:spring-context-support:5.2.6.RELEASE'
+        implementation 'org.springframework:spring-aop:5.2.6.RELEASE'
+// tomcat
+        implementation 'org.apache.tomcat:tomcat-catalina-ha:9.0.37'
+        implementation 'org.apache.tomcat:tomcat-catalina:9.0.37'
+        implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.27'
+        implementation 'org.apache.tomcat.embed:tomcat-embed-el:9.0.27'
+        implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.27'
+        implementation 'org.apache.tomcat:tomcat-websocket:9.0.27'
+// quartz
+        implementation("org.quartz-scheduler:quartz:${property('quartz.version')}") {
+            exclude group: 'com.mchange', module: 'c3p0'
+            exclude group: 'com.zaxxer', module: 'HikariCP-java6'
+        }
+        implementation("org.quartz-scheduler:quartz-jobs:${property('quartz.version')}")
+//spring-boot
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.2.6.RELEASE'
+// cache
+        implementation 'javax.cache:cache-api:1.0.0'
+        implementation 'cn.hutool:hutool-all:5.4.3'
+// valid
+        implementation('org.hibernate.validator:hibernate-validator:6.2.0.Final') {
+            exclude group: 'javax.validation', module: 'validation-api'
+            exclude group: 'com.kirkk', module: 'jaranalyzer'
+            exclude group: 'jdom', module: 'jdom'
+            exclude group: 'nekohtml', module: 'nekohtml'
+            exclude group: 'junit', module: 'junit'
+        }
+        implementation 'jakarta.validation:jakarta.validation-api:2.0.2'
+// datasource
+        implementation 'com.alibaba:druid:1.0.25'
+// alibaba
+        implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:' + "${property('alibaba.version')}"
+    }
+    test {
+        useJUnitPlatform()
+    }
+}
+
+

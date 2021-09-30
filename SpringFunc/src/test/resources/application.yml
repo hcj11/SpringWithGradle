@@ -1,0 +1,13 @@
+info.name: externalPropertiesNames
+spring:
+  profiles: dev
+---
+servers:
+  - foo.bar: aaa
+  - far.boo: bbb
+redis:
+  port:
+    - 6379
+    - 8080
+spring:
+  profiles: local

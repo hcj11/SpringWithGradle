@@ -1,0 +1,37 @@
+<configuration debug="false" scan="true" scanPeriod="30 seconds">
+    <contextName>myAppName</contextName>
+    <property resource="application.properties"/>
+
+<!--        <property scope="context"  name="USER_HOME" value="F:\\integration\\basic\\SpringWithGradle\\SpringFunc"/>-->
+    <!--During substitution, properties are looked up in the local scope first, in the context scope second, in the system properties scope third, and in the OS environment fourth and last.-->
+
+    <include resource="inclusion.xml"/>
+    <!--每日 ，每分钟 一个日志-->
+    <!--每日根据size进行分隔文件 详细一点。-->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!--        <prudent>true</prudent>-->
+        <file>${USER_HOME:-C:\\Users\\Administrator}\\myApp.log</file>
+        <rollingPolicy  class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <maxHistory>6</maxHistory>
+            <fileNamePattern>myApp.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+<!--                %contextName [%line] %msg%n-->
+                %-5X{first} %-5X{last} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- extends root additivity -->
+<!--    <logger name="boot.logging.logback" additivity="false">-->
+<!--        <appender-ref ref="file"/>-->
+<!--    </logger>-->
+
+    <root name="root">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>

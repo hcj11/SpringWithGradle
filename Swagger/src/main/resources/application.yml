@@ -1,0 +1,40 @@
+﻿spring:
+  freemarker:
+    allow-request-override: true
+    content-type: application/json;charset=utf-8
+    template-loader-path: /templates/
+    enabled: true
+  groovy:
+    template:
+      content-type: text/html
+  http:
+    converters:
+      preferred-json-mapper: jackson
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 0B
+      max-file-size: 1MB
+      max-request-size: 10MB
+      location: /tmp/
+      resolve-lazily: false
+  cloud:
+    nacos:
+      config:
+        password: nacos
+        username: nacos
+        server-addr: localhost:8848
+
+  application:
+    name: example
+#    cloud:
+#      config:
+#        server:
+logging:
+  config: classpath:logback-boot.xml
+server:
+  port: 8080
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: true

@@ -1,0 +1,11 @@
+rootProject.name = 'SpringWithGradle'
+include(':core')
+include 'SpringFunc'
+include 'BootDemo'
+include 'Swagger'
+include 'nacos:Nacos-Consumer'
+findProject(':nacos:Nacos-Consumer')?.name = 'Nacos-Consumer'
+include 'nacos:Nacos-Provider'
+findProject(':nacos:Nacos-Provider')?.name = 'Nacos-Provider'
+include 'JavaConcurrency'
+include 'Algorithm'
