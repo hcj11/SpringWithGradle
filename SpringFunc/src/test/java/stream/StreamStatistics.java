@@ -1,10 +1,12 @@
 package stream;
 
 import com.google.common.collect.Lists;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import sun.misc.Unsafe;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Spliterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -22,18 +24,37 @@ import java.util.stream.Stream;
 public class StreamStatistics {
 
     @Test
-    public void nextGaussian(){
+    public void nextGaussian() {
         Executors.newSingleThreadExecutor();
 
         double v = ThreadLocalRandom.current().nextGaussian();
         System.out.println(v);
 
     }
+
     static <T> void parEach(TaggedArray<T> a, Consumer<T> action) {
 
         Spliterator<T> s = a.spliterator();
         long targetBatchSize = s.estimateSize() / (ForkJoinPool.getCommonPoolParallelism() * 8);
         new TaggedArray.ParEach(null, s, action, targetBatchSize).invoke();
+    }
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    @Data
+//    static class CustomInteger extends java.lang.Integer {
+//
+//        public CustomInteger(int value) {
+//            super(value);
+//        }
+//    }
+
+    @Test
+    public void atomicIntegerUpdate() {
+        // todo look up sources
+        // Caused by: java.lang.IllegalAccessException at StreamStatistics.java:53
+        AtomicIntegerFieldUpdater<Integer> counter = AtomicIntegerFieldUpdater.newUpdater(Integer.class, "value");
+        int i = counter.addAndGet(new Integer(1), 1);
+        Assert.assertEquals(i, 2);
     }
 
     @Test
@@ -60,8 +81,8 @@ public class StreamStatistics {
 
     @Test
     public void test2() {
-        int iright = 12<<0;
-        int ileft = 12>>0;
+        int iright = 12 << 0;
+        int ileft = 12 >> 0;
 
         long negative = 0xf0000000;
         String s = Long.toString(negative, 16);
@@ -96,9 +117,10 @@ public class StreamStatistics {
 
     @Test
     public void test1() throws IOException {
-        ArrayList<Object> objects = Lists.newArrayList();
+        ArrayList<Object> objects = Lists.newArrayList(1,2,3,4,5,5,6,7,7,8,8,8);
 
-//        objects.spliterator().tryAdvance();
+        objects.stream().parallel().forEach(System.out::println);
+//        objects.stream().spliterator().forEachRemaining(System.out::println);
 
 //        objects.stream().forEach();
         Stream.generate(Math::random).limit(5).forEach(System.out::println);
@@ -107,4 +129,6 @@ public class StreamStatistics {
         Files.lines(Paths.get(""));
 
     }
+
+
 }
