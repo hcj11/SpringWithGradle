@@ -7,15 +7,15 @@ import lombok.extern.apachecommons.CommonsLog;
 import java.util.Date;
 
 /**
- * »ù´¡Êı¾İÀà
+ * åŸºç¡€æ•°æ®ç±»
  * @author Jiaju Zhuang
  **/
 @Data
 public class DownloadData {
-    @ExcelProperty("×Ö·û´®±êÌâ")
+    @ExcelProperty("å­—ç¬¦ä¸²æ ‡é¢˜")
     private String string;
-    @ExcelProperty("ÈÕÆÚ±êÌâ")
+    @ExcelProperty("æ—¥æœŸæ ‡é¢˜")
     private Date date;
-    @ExcelProperty("Êı×Ö±êÌâ")
+    @ExcelProperty("æ•°å­—æ ‡é¢˜")
     private Double doubleData;
 }

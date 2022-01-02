@@ -40,7 +40,7 @@ public class CustomSpringFactories {
         /**
          * @ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
          *  @Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
-         *  useDefaultFilter  =>  É¨Ãè @component
+         *  useDefaultFilter  =>  æ‰«æ @component
          */
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(context,true);

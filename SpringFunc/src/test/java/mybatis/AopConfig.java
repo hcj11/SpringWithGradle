@@ -25,9 +25,7 @@ public class AopConfig {
     public Agent agent() {
         return new Agent();
     }
-    /**
-     * 构建aop代理
-     */
+
     @Bean
     public void copyMarker(){
 
@@ -39,9 +37,6 @@ public class AopConfig {
         @Pointcut(value = "execution(void sample.mybatis.mapper.MapperInterface.*(..)) && @annotation(sample.mybatis.annotation.SqlCheck) && @annotation(org.apache.ibatis.annotations.Insert)")
         public void pointForSqlCheck() {
         }
-        /**
-         * method未被拦截， 无法拦截-> MockConnection 因为mock 也是动态代理生成。, 未找到target。
-         */
         @Pointcut(value = "execution(java.sql.PreparedStatement com.mockrunner.mock.jdbc.MockConnection.prepareStatement(..)) && args( sql,  resultSetType,  resultSetConcurrency)")
         public void prepareStatement(String sql, int resultSetType, int resultSetConcurrency) {
         }
@@ -59,7 +54,7 @@ public class AopConfig {
                 List<List<UserDto>> partition = Lists.partition(args, 4);
                 partition.stream().forEach(userDtos -> {
                     userDtos.stream().forEach(userDto -> userDto.setOrgCode("111"));
-                    target.insert(userDtos);
+                    target.insertList(userDtos);
                 });
                 return null;
             } else {

@@ -1,4 +1,4 @@
-package Utils;
+package Utils.Utils;
 
 public interface Constants {
     String JOB_PARAM_KEY = "JOB_PARAM_KEY";

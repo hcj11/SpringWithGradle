@@ -47,9 +47,11 @@ dependencyManagement {
         mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
     }
 }
-// Éú³Éjar gradle repack
+
+// sub jar gradle repack
 subprojects {
     apply plugin: 'java'
+    buildDir = 'out'
 
     repositories {
         mavenLocal()
@@ -63,10 +65,10 @@ subprojects {
         annotationProcessor 'org.projectlombok:lombok:1.18.12'
         testCompileOnly 'org.projectlombok:lombok:1.18.12'
         compileOnly 'org.projectlombok:lombok:1.18.12'
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
         testImplementation 'junit:junit:4.12'
-        testImplementation 'org.springframework:spring-test:5.2.6.RELEASE'
+        testImplementation 'org.springframework:spring-test:5.2.12.RELEASE'
         implementation 'org.springframework.boot:spring-boot-test:2.2.2.RELEASE'
         testImplementation 'org.mockito:mockito-all:1.10.19'
 // aop
@@ -84,21 +86,21 @@ subprojects {
         implementation 'org.apache.commons:commons-lang3:3.10'
         implementation 'commons-beanutils:commons-beanutils:1.8.0'
 // sping
-        implementation 'org.springframework:spring-jdbc:5.2.6.RELEASE'
-        implementation 'org.springframework:spring-web:5.2.6.RELEASE'
-        implementation 'org.springframework:spring-webmvc:5.2.6.RELEASE'
-        implementation 'org.springframework:spring-beans:5.2.6.RELEASE'
-        implementation 'org.springframework:spring-core:5.2.6.RELEASE'
-        implementation 'org.springframework:spring-context:5.2.6.RELEASE'
-        implementation 'org.springframework:spring-context-support:5.2.6.RELEASE'
-        implementation 'org.springframework:spring-aop:5.2.6.RELEASE'
+        implementation 'org.springframework:spring-jdbc:5.2.12.RELEASE'
+        implementation 'org.springframework:spring-web:5.2.12.RELEASE'
+        implementation 'org.springframework:spring-webmvc:5.2.12.RELEASE'
+        implementation 'org.springframework:spring-beans:5.2.12.RELEASE'
+        implementation 'org.springframework:spring-core:5.2.12.RELEASE'
+        implementation 'org.springframework:spring-context:5.2.12.RELEASE'
+        implementation 'org.springframework:spring-context-support:5.2.12.RELEASE'
+        implementation 'org.springframework:spring-aop:5.2.12.RELEASE'
 // tomcat
-        implementation 'org.apache.tomcat:tomcat-catalina-ha:9.0.37'
-        implementation 'org.apache.tomcat:tomcat-catalina:9.0.37'
-        implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.27'
-        implementation 'org.apache.tomcat.embed:tomcat-embed-el:9.0.27'
-        implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.27'
-        implementation 'org.apache.tomcat:tomcat-websocket:9.0.27'
+        implementation 'org.apache.tomcat:tomcat-catalina-ha:9.0.41'
+        implementation 'org.apache.tomcat:tomcat-catalina:9.0.41'
+        implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.41'
+        implementation 'org.apache.tomcat.embed:tomcat-embed-el:9.0.41'
+        implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.41'
+        implementation 'org.apache.tomcat:tomcat-websocket:9.0.41'
 // quartz
         implementation("org.quartz-scheduler:quartz:${property('quartz.version')}") {
             exclude group: 'com.mchange', module: 'c3p0'
@@ -121,8 +123,9 @@ subprojects {
         implementation 'jakarta.validation:jakarta.validation-api:2.0.2'
 // datasource
         implementation 'com.alibaba:druid:1.0.25'
-// alibaba
-        implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:' + "${property('alibaba.version')}"
+        // pagehelper
+        implementation group: 'com.github.pagehelper', name: 'pagehelper', version: '5.2.0'
+
     }
     test {
         useJUnitPlatform()

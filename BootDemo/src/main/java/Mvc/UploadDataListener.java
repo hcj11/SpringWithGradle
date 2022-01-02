@@ -10,31 +10,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Ä£°åµÄ¶ÁÈ¡Àà
+ * æ¨¡æ¿çš„è¯»å–ç±»
  *
  * @author Jiaju Zhuang
  */
-// ÓĞ¸öºÜÖØÒªµÄµã DemoDataListener ²»ÄÜ±»spring¹ÜÀí£¬ÒªÃ¿´Î¶ÁÈ¡excel¶¼Òªnew,È»ºóÀïÃæÓÃµ½spring¿ÉÒÔ¹¹Ôì·½·¨´«½øÈ¥
+// æœ‰ä¸ªå¾ˆé‡è¦çš„ç‚¹ DemoDataListener ä¸èƒ½è¢«springç®¡ç†ï¼Œè¦æ¯æ¬¡è¯»å–exceléƒ½è¦new,ç„¶åé‡Œé¢ç”¨åˆ°springå¯ä»¥æ„é€ æ–¹æ³•ä¼ è¿›å»
 public class UploadDataListener extends AnalysisEventListener<UploadData> {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(UploadDataListener.class);
     /**
-     * Ã¿¸ô5Ìõ´æ´¢Êı¾İ¿â£¬Êµ¼ÊÊ¹ÓÃÖĞ¿ÉÒÔ3000Ìõ£¬È»ºóÇåÀílist £¬·½±ãÄÚ´æ»ØÊÕ
+     * æ¯éš”5æ¡å­˜å‚¨æ•°æ®åº“ï¼Œå®é™…ä½¿ç”¨ä¸­å¯ä»¥3000æ¡ï¼Œç„¶åæ¸…ç†list ï¼Œæ–¹ä¾¿å†…å­˜å›æ”¶
      */
     private static final int BATCH_COUNT = 5;
     List<UploadData> list = new ArrayList<UploadData>();
     /**
-     * ¼ÙÉèÕâ¸öÊÇÒ»¸öDAO£¬µ±È»ÓĞÒµÎñÂß¼­Õâ¸öÒ²¿ÉÒÔÊÇÒ»¸öservice¡£µ±È»Èç¹û²»ÓÃ´æ´¢Õâ¸ö¶ÔÏóÃ»ÓÃ¡£
+     * å‡è®¾è¿™ä¸ªæ˜¯ä¸€ä¸ªDAOï¼Œå½“ç„¶æœ‰ä¸šåŠ¡é€»è¾‘è¿™ä¸ªä¹Ÿå¯ä»¥æ˜¯ä¸€ä¸ªserviceã€‚å½“ç„¶å¦‚æœä¸ç”¨å­˜å‚¨è¿™ä¸ªå¯¹è±¡æ²¡ç”¨ã€‚
      */
     private UploadDAO uploadDAO;
 
     public UploadDataListener() {
-        // ÕâÀïÊÇdemo£¬ËùÒÔËæ±ãnewÒ»¸ö¡£Êµ¼ÊÊ¹ÓÃÈç¹ûµ½ÁËspring,ÇëÊ¹ÓÃÏÂÃæµÄÓĞ²Î¹¹Ôìº¯Êı
+        // è¿™é‡Œæ˜¯demoï¼Œæ‰€ä»¥éšä¾¿newä¸€ä¸ªã€‚å®é™…ä½¿ç”¨å¦‚æœåˆ°äº†spring,è¯·ä½¿ç”¨ä¸‹é¢çš„æœ‰å‚æ„é€ å‡½æ•°
         uploadDAO = new UploadDAO();
     }
 
     /**
-     * Èç¹ûÊ¹ÓÃÁËspring,ÇëÊ¹ÓÃÕâ¸ö¹¹Ôì·½·¨¡£Ã¿´Î´´½¨ListenerµÄÊ±ºòĞèÒª°Ñspring¹ÜÀíµÄÀà´«½øÀ´
+     * å¦‚æœä½¿ç”¨äº†spring,è¯·ä½¿ç”¨è¿™ä¸ªæ„é€ æ–¹æ³•ã€‚æ¯æ¬¡åˆ›å»ºListenerçš„æ—¶å€™éœ€è¦æŠŠspringç®¡ç†çš„ç±»ä¼ è¿›æ¥
      *
      * @param uploadDAO
      */
@@ -43,7 +43,7 @@ public class UploadDataListener extends AnalysisEventListener<UploadData> {
     }
 
     /**
-     * Õâ¸öÃ¿Ò»ÌõÊı¾İ½âÎö¶¼»áÀ´µ÷ÓÃ
+     * è¿™ä¸ªæ¯ä¸€æ¡æ•°æ®è§£æéƒ½ä¼šæ¥è°ƒç”¨
      *
      * @param data
      *            one row value. Is is same as {@link AnalysisContext#readRowHolder()}
@@ -51,34 +51,34 @@ public class UploadDataListener extends AnalysisEventListener<UploadData> {
      */
     @Override
     public void invoke(UploadData data, AnalysisContext context) {
-        LOGGER.info("½âÎöµ½Ò»ÌõÊı¾İ:{}", JSON.toJSONString(data));
+        LOGGER.info("è§£æåˆ°ä¸€æ¡æ•°æ®:{}", JSON.toJSONString(data));
         list.add(data);
-        // ´ïµ½BATCH_COUNTÁË£¬ĞèÒªÈ¥´æ´¢Ò»´ÎÊı¾İ¿â£¬·ÀÖ¹Êı¾İ¼¸ÍòÌõÊı¾İÔÚÄÚ´æ£¬ÈİÒ×OOM
+        // è¾¾åˆ°BATCH_COUNTäº†ï¼Œéœ€è¦å»å­˜å‚¨ä¸€æ¬¡æ•°æ®åº“ï¼Œé˜²æ­¢æ•°æ®å‡ ä¸‡æ¡æ•°æ®åœ¨å†…å­˜ï¼Œå®¹æ˜“OOM
         if (list.size() >= BATCH_COUNT) {
             saveData();
-            // ´æ´¢Íê³ÉÇåÀí list
+            // å­˜å‚¨å®Œæˆæ¸…ç† list
             list.clear();
         }
     }
 
     /**
-     * ËùÓĞÊı¾İ½âÎöÍê³ÉÁË ¶¼»áÀ´µ÷ÓÃ
+     * æ‰€æœ‰æ•°æ®è§£æå®Œæˆäº† éƒ½ä¼šæ¥è°ƒç”¨
      *
      * @param context
      */
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
-        // ÕâÀïÒ²Òª±£´æÊı¾İ£¬È·±£×îºóÒÅÁôµÄÊı¾İÒ²´æ´¢µ½Êı¾İ¿â
+        // è¿™é‡Œä¹Ÿè¦ä¿å­˜æ•°æ®ï¼Œç¡®ä¿æœ€åé—ç•™çš„æ•°æ®ä¹Ÿå­˜å‚¨åˆ°æ•°æ®åº“
         saveData();
-        LOGGER.info("ËùÓĞÊı¾İ½âÎöÍê³É£¡");
+        LOGGER.info("æ‰€æœ‰æ•°æ®è§£æå®Œæˆï¼");
     }
 
     /**
-     * ¼ÓÉÏ´æ´¢Êı¾İ¿â
+     * åŠ ä¸Šå­˜å‚¨æ•°æ®åº“
      */
     private void saveData() {
-        LOGGER.info("{}ÌõÊı¾İ£¬¿ªÊ¼´æ´¢Êı¾İ¿â£¡", list.size());
+        LOGGER.info("{}æ¡æ•°æ®ï¼Œå¼€å§‹å­˜å‚¨æ•°æ®åº“ï¼", list.size());
         uploadDAO.save(list);
-        LOGGER.info("´æ´¢Êı¾İ¿â³É¹¦£¡");
+        LOGGER.info("å­˜å‚¨æ•°æ®åº“æˆåŠŸï¼");
     }
 }

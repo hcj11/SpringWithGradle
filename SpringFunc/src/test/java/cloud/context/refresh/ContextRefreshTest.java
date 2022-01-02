@@ -149,7 +149,7 @@ public class ContextRefreshTest {
                     "applicationConfig: [classpath:/bootstrap-refresh.properties]",
                     "applicationConfig: [classpath:/bootstrap.properties]");
             /**
-             * Ä¬ÈÏ  properties >  yml
+             * é»˜è®¤  properties >  yml
              */
             String val = context.
                     getEnvironment().getProperty("test.bootstrap.foo");

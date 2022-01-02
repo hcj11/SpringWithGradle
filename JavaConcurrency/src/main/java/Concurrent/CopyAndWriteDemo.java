@@ -10,12 +10,12 @@ public class CopyAndWriteDemo {
     private    CopyOnWriteArrayList<String> strings = new CopyOnWriteArrayList<>();
 
     public void put(){
-        // ²åÈëºó£¬ÔÚÆô¶¯ÈÎÎñ£¬
+        // æ’å…¥åï¼Œåœ¨å¯åŠ¨ä»»åŠ¡ï¼Œ
 
         strings.stream().forEach(c->{
             System.out.println(c);
         });
-        // ÓĞÑÓ³ÙĞÔ£¬µ«ÊÇÏß³Ì³Ø¿ÉÒÔÈ·¶¨ £¨·½·¨ÊÇ·ñÖ´ĞĞ½áÊø£©¡£
+        // æœ‰å»¶è¿Ÿæ€§ï¼Œä½†æ˜¯çº¿ç¨‹æ± å¯ä»¥ç¡®å®š ï¼ˆæ–¹æ³•æ˜¯å¦æ‰§è¡Œç»“æŸï¼‰ã€‚
         ArrayList<String> list = Lists.<String>newArrayList();
         List<List<String>> partition = Lists.partition(list, 10);
 

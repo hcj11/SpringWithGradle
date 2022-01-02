@@ -4,16 +4,16 @@
 logging:
   config: classpath:config/logback-boot.xml
   # cloud.
-  #spring:
-  #  cloud:
-  #    nacos:
-  #      config:
-  #        enabled: true
-  #        server-addr: localhost:8848
-  #        username: nacos
-  #        password: nacos
-  #        name: dataId
-  #        endpoint: localhost:8849
+spring:
+#  cloud:
+#    nacos:
+#      config:
+#        enabled: true
+#        server-addr: localhost:8848
+#        username: nacos
+#        password: nacos
+#        name: dataId
+#        endpoint: localhost:8849
 
   redis:
     database: 0

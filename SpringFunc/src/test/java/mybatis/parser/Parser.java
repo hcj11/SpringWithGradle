@@ -26,10 +26,6 @@ import static org.junit.Assert.assertEquals;
 
 @Slf4j
 public class Parser {
-    /**
-     * maven 的重要性。
-     * maven 删除后重新执行。
-     */
     static GenericTokenParser parser =
             new GenericTokenParser("${", "}", new VariableTokenHandler(new HashMap<String, String>() {
                 {
@@ -118,9 +114,6 @@ public class Parser {
             return this.ordinal() == 0 ? "A" : "B";
         }
     }
-    /**
-     * 1. 初始化logSystem
-     */
     @Test
     public void parseSqlNodeWithinOgnl() throws IOException, SQLException {
 
@@ -194,6 +187,7 @@ public class Parser {
     public void parseDynamicSqlSource() throws IOException, SQLException {
         String expected = "select * from users where userId = ?";
         TextSqlNode textSqlNode = new TextSqlNode("select * from users where userId = #{userId,javaType=java.lang.Integer,jdbcType=INTEGER}");
+
         DynamicSqlSource dynamicSqlSource = createDynamicSqlSource(textSqlNode);
         HashMap map = new HashMap<String, String>() {{
             put("userId", "111");

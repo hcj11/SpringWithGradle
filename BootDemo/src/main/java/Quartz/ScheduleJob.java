@@ -13,11 +13,11 @@ import org.springframework.util.Assert;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static Utils.Constants.JOB_PARAM_KEY;
+import static Utils.Utils.Constants.JOB_PARAM_KEY;
 
 
 /**
- * ¶¨Ê±ÈÎÎñ
+ * ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
  *
  * @author Mark sunlightcs@gmail.com
  */
@@ -32,15 +32,15 @@ public class ScheduleJob extends QuartzJobBean {
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
         Object o1 = jobDataMap.get(JOB_PARAM_KEY);
-        Assert.isTrue(o1 != null, "²»ÄÜÎª¿Õ");
+        Assert.isTrue(o1 != null, "ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½");
         System.out.println(o1);
-        // ScheduleJobEntity(jobId=5, beanName=createStatsJob, params=, cronExpression=0 0 19 * * ?, status=0, remark=¶¨Ê±Éú³É¼ì²âÈÎÎñ, createTime=Fri Dec 27 09:56:23 CST 2019)
+        // ScheduleJobEntity(jobId=5, beanName=createStatsJob, params=, cronExpression=0 0 19 * * ?, status=0, remark=ï¿½ï¿½Ê±ï¿½ï¿½ï¿½É¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, createTime=Fri Dec 27 09:56:23 CST 2019)
         String substring = o1.toString();
         ClassLoader classLoader = o1.getClass().getClassLoader();
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
         if (o1 instanceof MessageDto) {
-            logger.info("yes , Í¬Ò»¸öÊµÀý");
+            logger.info("yes , Í¬Ò»ï¿½ï¿½Êµï¿½ï¿½");
         }
         Assert.isTrue(classLoader!=contextClassLoader);
 

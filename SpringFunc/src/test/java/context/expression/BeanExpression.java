@@ -4,23 +4,23 @@ import context.CompontScan;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -29,8 +29,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Set;
 
 @ConfigurationProperties
 @Data
@@ -50,15 +50,22 @@ class CustomMap {
 class Dummy {
     String msg;
 }
-
-
+@ConfigurationProperties(prefix = "disable")
+@Data
+class DisableBean {
+    private String dummy;
+}
+@Data
+class OpenBean {
+    private String dummy;
+}
 @Slf4j
 @RunWith(SpringRunner.class)
 public class BeanExpression {
 
     @Data
     @PropertySource(value = "classpath:/application.properties")
-    @EnableConfigurationProperties(value = {CustomMap.class, Dummy.class})
+    @EnableConfigurationProperties(value = {CustomMap.class, Dummy.class,DisableBean.class})
     @Configuration(value = "testbean")
     static class TestBean {
 
@@ -67,7 +74,23 @@ public class BeanExpression {
 
         @Value("${number:0}")
         Integer number;
-
+/**
+ warnning: you need in case of the  bean to ensure the variable 's  type
+ */
+        @ConditionalOnExpression("#{environment.getProperty('spring.profiles.active').equals('dev') " +
+                "and environment.getProperty('number').equals('11111') " +
+                "}")
+        @Bean
+        public DisableBean disableBean() {
+            return new DisableBean();
+        }
+        @ConditionalOnExpression("#{environment.getProperty('spring.profiles.active').equals('dev') " +
+                "and environment.getProperty('number').equals('1111') " +
+                "}")
+        @Bean
+        public OpenBean openBean() {
+            return new OpenBean();
+        }
         @Bean
         public Dummy dummy() {
 
@@ -85,8 +108,28 @@ public class BeanExpression {
         }
     }
 
-    @Before
-    public void setUp() {
+    AnnotationConfigApplicationContext context = null;
+
+    BeanExpressionResolver resolver = null;
+    BeanExpressionContext expressionContext = null;
+    ConfigurableListableBeanFactory beanFactory = null;
+
+    @BeforeEach
+    public void setUp(TestInfo testInfo) {
+        context = new AnnotationConfigApplicationContext(TestBean.class);
+
+        context.getEnvironment().getPropertySources().forEach(propertySource -> {
+            log.info("=={}", propertySource.toString());
+        });
+
+        beanFactory = context.getBeanFactory();
+
+        CompontScan.print(beanFactory);
+
+        resolver = beanFactory.getBeanExpressionResolver();
+        // StandardBeanExpressionResolver
+
+        expressionContext = new BeanExpressionContext(beanFactory, null);
     }
 
     @Test
@@ -105,25 +148,46 @@ public class BeanExpression {
          * uri: F:\integration\basic\SpringWithGradle\SpringFunc\src\main\resources
          */
     }
+    @Test
+    public void MultiBeanWithSameType(){
+        Map<String, Dummy> beansOfType = context.getBeansOfType(Dummy.class);
+        log.info("map:{}",beansOfType);
+        Set<String> strings = beansOfType.keySet();
+        Assert.assertEquals(strings.toArray(new String[0]),new String[]{"dummy","dummy1-context.expression.Dummy"});
+        Assert.assertEquals(beansOfType.get("dummy"),beansOfType.get("dummy1-context.expression.Dummy"));
+        Assert.assertThrows(NoUniqueBeanDefinitionException.class,()->{context.getBean(Dummy.class);});
+
+    }
+    @Test
+    public void ConditionalEvaluateTestToDisableDisableBean() {
+        // when DisableBean don't register in the beanfactory
+        // and use the ConfigurationPropertiesBean,
+        DisableBean bean = context.getBean("disable-context.expression.DisableBean", DisableBean.class);
+        Assert.assertTrue(bean.getDummy().equals("foo"));
+    }
+
+    @Test
+    public void expressionEvaluateMultiConditionInTheLocal() {
+        Environment bean = beanFactory.getBean(Environment.class);
+        String property = bean.getProperty("spring.profiles.active");
+        Assert.assertTrue(property.equals("dev"));
+        // from the all( environment)  and  the part of all (systemEnvironment、systemProperties)
+        // the name of PropertySource
+        //  to get property,
+        Boolean evaluate = (Boolean) resolver.evaluate("#{environment.getProperty('spring.profiles.active').equals('dev')" +
+                " and  environment.getProperty('number').equals('1111') " +
+                " and systemEnvironment.get('USERDOMAIN_ROAMINGPROFILE').equals('0JRXX56OU4ME1C4')" +
+                " and environment.getProperty('NUMBER_OF_PROCESSORS').equals('4') }", expressionContext);
+        Assert.assertTrue(evaluate);
+
+
+    }
 
     /**
      * context/BeanExpression-context.xml
      */
     @Test
     public void expressionEvaluate() {
-        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(TestBean.class);
-        context.getEnvironment().getPropertySources().forEach(propertySource -> {
-            log.info("=={}", propertySource.toString());
-        });
-
-
-        ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
-
-        CompontScan.print(beanFactory);
-
-        BeanExpressionResolver resolver = beanFactory.getBeanExpressionResolver();
-
-        BeanExpressionContext expressionContext = new BeanExpressionContext(beanFactory, null);
 
 
         Boolean evaluateActive = (Boolean) resolver.evaluate("#{testbean.active.equals('dev')}", expressionContext);
@@ -131,7 +195,7 @@ public class BeanExpression {
         Boolean evaluateNumer = (Boolean) resolver.evaluate("#{testbean.number.equals(1111)}", expressionContext);
         Assert.assertTrue(evaluateNumer);
 
-        Dummy dummy = (Dummy) beanFactory.getBean("dummy1-context.Dummy");
+        Dummy dummy = (Dummy) beanFactory.getBean("dummy1-context.expression.Dummy");
 
         Assert.assertEquals(dummy.msg, "hello,scope!");
 
@@ -145,7 +209,7 @@ public class BeanExpression {
 
         Map<String, String> map = (Map<String, String>) customMap.getMap();
 
-        CustomMap customMap2 = (CustomMap) beanFactory.getBean("custom-context.CustomMap");
+        CustomMap customMap2 = (CustomMap) beanFactory.getBean("customMap");
 
         log.info("==customMap2: ={}", customMap2);
         /**

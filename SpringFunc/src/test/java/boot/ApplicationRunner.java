@@ -1,6 +1,5 @@
 package boot;
 
-import Simple.utils.BeanUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

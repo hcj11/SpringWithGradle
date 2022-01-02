@@ -26,17 +26,17 @@ public class InheritThreadLocalExt {
     public static InheritableThreadLocal<Person> t1 = new InheritableThreadLocal<Person>(){
         @Override
         protected Person childValue(Person parentValue) {
-             parentValue.setOthers("parent ¸½¼Ó");
+             parentValue.setOthers("parent é™„åŠ ");
              return parentValue;
         }
     };
 
     public static void main(String[] args) throws InterruptedException {
-        Person ÕÅ = new Person("ÕÅ",null);
-        t1.set(ÕÅ);
+        Person å¼  = new Person("å¼ ",null);
+        t1.set(å¼ );
         ThreadLocalExt threadLocalExt = new ThreadLocalExt();
         threadLocalExt.start();
         Thread.sleep(1000);
-        ÕÅ.setUsername("ºî´º½¨");
+        å¼ .setUsername("ä¾¯æ˜¥å»º");
     }
 }

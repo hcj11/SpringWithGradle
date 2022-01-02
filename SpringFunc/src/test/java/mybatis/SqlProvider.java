@@ -17,13 +17,13 @@ public class SqlProvider {
     public String getSqlProperties(@Param("val") String val) {
         return "select ${val}";
     }
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
 //        SQLSelectParser ;
 
         // 48 ,49
-        char ints = '0';
-        int ints1 = ints;
-        log.info("{}",ints1);
-
-    }
+//        char ints = '0';
+//        int ints1 = ints;
+//        log.info("{}",ints1);
+//
+//    }
 }

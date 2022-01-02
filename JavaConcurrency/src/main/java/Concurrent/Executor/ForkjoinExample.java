@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.*;
 
 /**
- * forkJoin ²¢ĞĞ¼ÆËã1-100µÄÖµ
+ * forkJoin å¹¶è¡Œè®¡ç®—1-100çš„å€¼
  */
 @EqualsAndHashCode(callSuper=false)
 @Slf4j
@@ -37,7 +37,7 @@ public class ForkjoinExample extends RecursiveTask<Integer> {
         }
     }
     /**
-     * ²¢ĞĞ¼ÆËã£¬Ã¿¸öÏß³Ì¶ÔÓ¦Ò»¸ö¶ÓÁĞ£¬ ²»»á²úÉúÏß³Ì°²È«ÎÊÌâ¡£
+     * å¹¶è¡Œè®¡ç®—ï¼Œæ¯ä¸ªçº¿ç¨‹å¯¹åº”ä¸€ä¸ªé˜Ÿåˆ—ï¼Œ ä¸ä¼šäº§ç”Ÿçº¿ç¨‹å®‰å…¨é—®é¢˜ã€‚
      */
     public static void main(String[] args) {
         ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();

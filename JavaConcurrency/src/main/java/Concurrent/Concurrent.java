@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.*;
 
 /**
- * Éè¶¨Ò»¸ö¶ªÆú²ßÂÔ
+ * è®¾å®šä¸€ä¸ªä¸¢å¼ƒç­–ç•¥
  */
 class A {
     private String name;
@@ -31,7 +31,7 @@ public class Concurrent {
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
         return new ThreadPoolExecutor(nThreads, nThreads,
                 0L, TimeUnit.MILLISECONDS,
-                new ArrayBlockingQueue<>(3),// ×î¶à3¸ö
+                new ArrayBlockingQueue<>(3),// æœ€å¤š3ä¸ª
                 threadFactory,rejectedExecutionHandler);
     }
 
@@ -54,7 +54,7 @@ public class Concurrent {
     public static void normal(ThreadPoolExecutor make) {
         int i = 0;
         while (i++ < 5) {
-//            log.info("µ±Ç°Ïß³Ì³Ø×´Ì¬: {}",make);
+//            log.info("å½“å‰çº¿ç¨‹æ± çŠ¶æ€: {}",make);
             int finalI = i;
             make.submit(() -> {
                 log.info("{},{}",Thread.currentThread().getName(), finalI);;
@@ -69,11 +69,11 @@ public class Concurrent {
     }
 
     public static void main(String[] args) {
-        // 1¸ö¹¤×÷Ïß³Ì¡£+ 3¸öÈÎÎñ´óĞ¡¡£Ö®ºóµÚ5¸ö»á±¨´í
+        // 1ä¸ªå·¥ä½œçº¿ç¨‹ã€‚+ 3ä¸ªä»»åŠ¡å¤§å°ã€‚ä¹‹åç¬¬5ä¸ªä¼šæŠ¥é”™
         // Exception in thread "main" java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.FutureTask@1d56ce6a rejected from java.util.concurrent.ThreadPoolExecutor@5197848c[Running, pool size = 1, active threads = 1, queued tasks = 3, completed tasks = 0]
 //         abortMake(1);
-//        discardMake(1); // ¶ªÆú×îĞÂ´«µİ¹ıÀ´µÄ
-//        discardOldestMake(1); // ¶ªÆú×îÀÏ¡£
+//        discardMake(1); // ä¸¢å¼ƒæœ€æ–°ä¼ é€’è¿‡æ¥çš„
+//        discardOldestMake(1); // ä¸¢å¼ƒæœ€è€ã€‚
 //        callRunsMake(1);
 
     }

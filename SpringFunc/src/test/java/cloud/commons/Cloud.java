@@ -29,7 +29,7 @@ public class Cloud {
     @Autowired
     private ConfigurableEnvironment environment;
     /**
-     * º”‘ÿ static class°£
+     * Âä†ËΩΩ static class„ÄÇ
      */
     @Configuration
     @EnableAutoConfiguration

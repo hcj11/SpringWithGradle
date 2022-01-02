@@ -1,13 +1,13 @@
 package Exercise;
 
 public class MyThread2 extends Thread {
-    // ´ËÊ±count³ÉÁË¹²Ïí±äÁ¿£¬±ä»¯Ö÷ÒªÊÇrannable³ÉÁËÒ»·İ¡£
+    // æ­¤æ—¶countæˆäº†å…±äº«å˜é‡ï¼Œå˜åŒ–ä¸»è¦æ˜¯rannableæˆäº†ä¸€ä»½ã€‚
     private int count = 5;
 
     @Override
     public void run() {
         count--;
-        System.out.println(Thread.currentThread().getName() + "¼ÆËã count=" + count);
+        System.out.println(Thread.currentThread().getName() + "è®¡ç®— count=" + count);
     }
 
     public static void main(String[] args) {

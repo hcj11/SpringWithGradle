@@ -1,7 +1,5 @@
 plugins {
     id 'java'
-    id 'idea'
-    id 'io.spring.dependency-management'
 }
 group 'org.example'
 version '1.0-SNAPSHOT'
@@ -10,13 +8,10 @@ repositories {
     mavenLocal()
     mavenCentral()
 }
-logger.quiet('===' + hasProperty('mysql.version'))
-
-
 dependencies {
+    // libs
+    implementation fileTree(dir: '../libs', include: ['*.jar'])
+    testImplementation fileTree(dir: '../libs', include: ['*.jar'])
+    implementation project(':APIProject')
 
-}
-
-test {
-    useJUnitPlatform()
 }

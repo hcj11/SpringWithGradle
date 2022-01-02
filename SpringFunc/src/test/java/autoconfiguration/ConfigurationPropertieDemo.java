@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 /**
- * ÅäÖÃÊ¹ÓÃ¡£ ConfigurationProperties ºÍ EnableConfigurationProperties ¹ØÏµ¡£
+ * é…ç½®ä½¿ç”¨ã€‚ ConfigurationProperties å’Œ EnableConfigurationProperties å…³ç³»ã€‚
  */
 @Data
 @ConfigurationProperties(prefix = "hello")

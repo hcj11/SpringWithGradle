@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * ¼ÙÉèÕâ¸öÊÇÄãµÄDAO´æ´¢¡£µ±È»»¹ÒªÕâ¸öÀàÈÃspring¹ÜÀí£¬µ±È»Äã²»ÓÃĞèÒª´æ´¢£¬Ò²²»ĞèÒªÕâ¸öÀà¡£
+ * å‡è®¾è¿™ä¸ªæ˜¯ä½ çš„DAOå­˜å‚¨ã€‚å½“ç„¶è¿˜è¦è¿™ä¸ªç±»è®©springç®¡ç†ï¼Œå½“ç„¶ä½ ä¸ç”¨éœ€è¦å­˜å‚¨ï¼Œä¹Ÿä¸éœ€è¦è¿™ä¸ªç±»ã€‚
  *
  * @author Jiaju Zhuang
  **/
@@ -13,6 +13,6 @@ import java.util.List;
 public class UploadDAO {
 
     public void save(List<UploadData> list) {
-        // Èç¹ûÊÇmybatis,¾¡Á¿±ğÖ±½Óµ÷ÓÃ¶à´Îinsert,×Ô¼ºĞ´Ò»¸ömapperÀïÃæĞÂÔöÒ»¸ö·½·¨batchInsert,ËùÓĞÊı¾İÒ»´ÎĞÔ²åÈë
+        // å¦‚æœæ˜¯mybatis,å°½é‡åˆ«ç›´æ¥è°ƒç”¨å¤šæ¬¡insert,è‡ªå·±å†™ä¸€ä¸ªmapperé‡Œé¢æ–°å¢ä¸€ä¸ªæ–¹æ³•batchInsert,æ‰€æœ‰æ•°æ®ä¸€æ¬¡æ€§æ’å…¥
     }
 }

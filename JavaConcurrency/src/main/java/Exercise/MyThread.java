@@ -2,7 +2,7 @@ package Exercise;
 
 public class MyThread  extends Thread {
     private int count=5;
-    // 此时count 为不共享变量
+    // 姝ゆ椂count 涓轰笉鍏变韩鍙橀噺
     public MyThread(String name){
         super();
         setName(name);
@@ -12,7 +12,7 @@ public class MyThread  extends Thread {
         super.run();
         while (count>0){
             count--;
-            System.out.println(Thread.currentThread().getName()+"计算 count="+count);
+            System.out.println(Thread.currentThread().getName()+"璁＄畻 count="+count);
         }
     }
     public static void main(String[] args) {

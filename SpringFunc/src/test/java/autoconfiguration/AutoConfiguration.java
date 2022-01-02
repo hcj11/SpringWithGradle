@@ -29,7 +29,7 @@ class B {
 }
 
 /**
- * É¨ÃèconfigurationË³Ğò¡£
+ * æ‰«æconfigurationé¡ºåºã€‚
  *
  * @AutoConfigureOrder -> @AutoConfigureBefore
  */
@@ -51,7 +51,7 @@ class CustomConditional implements ConfigurationCondition {
     }
 
     /**
-     * ¸ù¾İ@Conditional ¶ÔÓ¦classÏÂµÄ×¢½â½øĞĞconfigurationµÄÈ·ÈÏ
+     * æ ¹æ®@Conditional å¯¹åº”classä¸‹çš„æ³¨è§£è¿›è¡Œconfigurationçš„ç¡®è®¤
      */
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
@@ -85,14 +85,14 @@ public class AutoConfiguration {
     public static void main(String[] args) {
 
     }
-
     @Test
-    public void after() {
+    public void AutoConfigureBeforeAnnoBetterThanOrder() {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.register(AutoConfiguration.class);
         context.registerBean("subc", SubC.class);
         context.refresh();
         CompontScan.printSingleton(context);
+
     }
 
     @Test

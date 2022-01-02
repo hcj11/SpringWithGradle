@@ -2,7 +2,6 @@ package aop;
 
 import cn.hutool.core.util.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -28,9 +27,9 @@ public class ColAgent {
         log.info("==============hashMap:{}", arg);
         if (ObjectUtil.isEmpty(name) || ObjectUtil.isEmpty(name.getName())) {
             name = new OrgCodeDomain();
-            name.setName("Íþº£ÊÐ--weihai");
+            name.setName("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½--weihai");
         }
-        log.info("after==========²ÎÊý£º{}", name.getName());
+        log.info("after==========ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½{}", name.getName());
         return proceedingJoinPoint.proceed(new Object[]{name, arg});
     }
 }

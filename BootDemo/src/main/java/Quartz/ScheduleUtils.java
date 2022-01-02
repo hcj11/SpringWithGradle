@@ -1,13 +1,13 @@
 package Quartz;
 
-import Utils.Constants;
+import Utils.Utils.Constants;
 import org.quartz.*;
 
-import static Utils.Constants.JOB_PARAM_KEY;
+import static Utils.Utils.Constants.JOB_PARAM_KEY;
 
 
 /**
- * ¶¨Ê±ÈÎÎñ¹¤¾ßÀà
+ * ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ñ¹¤¾ï¿½ï¿½ï¿½
  *
  * @author Mark sunlightcs@gmail.com
  */
@@ -15,106 +15,106 @@ public class ScheduleUtils {
     private final static String JOB_NAME = "TASK_";
 
     /**
-     * »ñÈ¡´¥·¢Æ÷key
+     * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½key
      */
     public static TriggerKey getTriggerKey(String jobId) {
         return TriggerKey.triggerKey(JOB_NAME + jobId);
     }
 
     /**
-     * »ñÈ¡jobKey
+     * ï¿½ï¿½È¡jobKey
      */
     public static JobKey getJobKey(String jobId) {
         return JobKey.jobKey(JOB_NAME + jobId);
     }
 
     /**
-     * »ñÈ¡±í´ïÊ½´¥·¢Æ÷
+     * ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      */
     public static CronTrigger getCronTrigger(Scheduler scheduler, String jobId) {
         try {
             return (CronTrigger) scheduler.getTrigger(getTriggerKey(jobId));
         } catch (Exception e) {
-            throw new RRException("»ñÈ¡¶¨Ê±ÈÎÎñCronTrigger³öÏÖÒì³£", e);
+            throw new RRException("ï¿½ï¿½È¡ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½CronTriggerï¿½ï¿½ï¿½ï¿½ï¿½ì³£", e);
         }
     }
 
     /**
-     * ´´½¨¶¨Ê±ÈÎÎñ
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
      */
     public static void createScheduleJob(Scheduler scheduler, MessageDto scheduleJob) {
         try {
-            //¹¹½¨jobÐÅÏ¢
+            //ï¿½ï¿½ï¿½ï¿½jobï¿½ï¿½Ï¢
             JobDetail jobDetail = JobBuilder.newJob(ScheduleJob.class).withIdentity(getJobKey(scheduleJob.getJobId())).build();
 
-            //±í´ïÊ½µ÷¶È¹¹½¨Æ÷
+            //ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½È¹ï¿½ï¿½ï¿½ï¿½ï¿½
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(scheduleJob.getCronExpression())
                     .withMisfireHandlingInstructionDoNothing();
 
-            //°´ÐÂµÄcronExpression±í´ïÊ½¹¹½¨Ò»¸öÐÂµÄtrigger
+            //ï¿½ï¿½ï¿½Âµï¿½cronExpressionï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½trigger
             CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(getTriggerKey(scheduleJob.getJobId())).withSchedule(scheduleBuilder).build();
 
-            //·ÅÈë²ÎÊý£¬ÔËÐÐÊ±µÄ·½·¨¿ÉÒÔ»ñÈ¡
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½È¡
             jobDetail.getJobDataMap().put(JOB_PARAM_KEY, scheduleJob);
 
             scheduler.scheduleJob(jobDetail, trigger);
 
-            //ÔÝÍ£ÈÎÎñ
+            //ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½
             if (scheduleJob.getStatus() == Constants.ScheduleStatus.PAUSE.getValue()) {
                 pauseJob(scheduler, scheduleJob.getJobId());
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RRException("´´½¨¶¨Ê±ÈÎÎñÊ§°Ü", e);
+            throw new RRException("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½", e);
         }
     }
 
 
     /**
-     * Á¢¼´Ö´ÐÐÈÎÎñ
+     * ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      */
     public static void run(Scheduler scheduler, MessageDto scheduleJob) {
         try {
-            //²ÎÊý
+            //ï¿½ï¿½ï¿½ï¿½
             JobDataMap dataMap = new JobDataMap();
             dataMap.put(JOB_PARAM_KEY, scheduleJob);
 
             scheduler.triggerJob(getJobKey(scheduleJob.getJobId()), dataMap);
         } catch (Exception e) {
-            throw new RRException("Á¢¼´Ö´ÐÐ¶¨Ê±ÈÎÎñÊ§°Ü", e);
+            throw new RRException("ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½", e);
         }
     }
 
     /**
-     * ÔÝÍ£ÈÎÎñ
+     * ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½
      */
     public static void pauseJob(Scheduler scheduler, String jobId) {
         try {
             scheduler.pauseJob(getJobKey(jobId));
         } catch (Exception e) {
-            throw new RRException("ÔÝÍ£¶¨Ê±ÈÎÎñÊ§°Ü", e);
+            throw new RRException("ï¿½ï¿½Í£ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½", e);
         }
     }
 
     /**
-     * »Ö¸´ÈÎÎñ
+     * ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½
      */
     public static void resumeJob(Scheduler scheduler, String jobId) {
         try {
             scheduler.resumeJob(getJobKey(jobId));
         } catch (Exception e) {
-            throw new RRException("ÔÝÍ£¶¨Ê±ÈÎÎñÊ§°Ü", e);
+            throw new RRException("ï¿½ï¿½Í£ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½", e);
         }
     }
 
     /**
-     * É¾³ý¶¨Ê±ÈÎÎñ
+     * É¾ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
      */
     public static void deleteScheduleJob(Scheduler scheduler, String jobId) {
         try {
             scheduler.deleteJob(getJobKey(jobId));
         } catch (Exception e) {
-            throw new RRException("É¾³ý¶¨Ê±ÈÎÎñÊ§°Ü", e);
+            throw new RRException("É¾ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½", e);
         }
     }
 }

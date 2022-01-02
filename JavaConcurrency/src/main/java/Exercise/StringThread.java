@@ -11,8 +11,8 @@ class StringService {
 
     public void doStringService(String lock) {
         /**
-         * this-> Õë¶ÔµÄ½øÈë·½·¨ÌåµÄÏß³Ì£¬ ºÍ static µÄº¬ÒåÒ»ÑùµÄ ºÍ ³ÉÔ±±äÁ¿º¬ÒåÒ»Ñù£¬
-         * Öµ±ØĞë±£³Ö²»±ä£¬
+         * this-> é’ˆå¯¹çš„è¿›å…¥æ–¹æ³•ä½“çš„çº¿ç¨‹ï¼Œ å’Œ static çš„å«ä¹‰ä¸€æ ·çš„ å’Œ æˆå‘˜å˜é‡å«ä¹‰ä¸€æ ·ï¼Œ
+         * å€¼å¿…é¡»ä¿æŒä¸å˜ï¼Œ
          * */
         synchronized (ImmuMutex) {
             System.out.println(Thread.currentThread().getName() + "---start");
@@ -36,7 +36,7 @@ class ThreadCC extends Thread {
     @Override
     public void run() {
         super.run();
-        // mybatis     new String(); µÄ»°£¬ÎŞ·¨Ëø×¡Í¬Ò»¸öÖµµÄ¡£
+        // mybatis     new String(); çš„è¯ï¼Œæ— æ³•é”ä½åŒä¸€ä¸ªå€¼çš„ã€‚
         StringService.doStringService(new String("A") + new String("B"));
     }
 }

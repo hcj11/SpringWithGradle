@@ -1,3 +1,11 @@
+mybatis-plus:
+  mapperLocations: classpath*:/mapper/**/*.xml
+  configuration:
+    defaultResultSetType: forward_only
+  globalConfig:
+    DbConfig:
+      idType: input
+
 info.name: externalPropertiesNames
 spring:
   profiles: dev

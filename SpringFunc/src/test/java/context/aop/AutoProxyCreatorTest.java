@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 enum Gender {
-    MAN("ÄĞ"), FEMAN("Å®");
+    MAN("ç”·"), FEMAN("å¥³");
     private String name;
 
     Gender(String gender) {
@@ -40,7 +40,7 @@ public class AutoProxyCreatorTest {
         private ITestBean testBean = new TestBean();
 
         /**
-         * getBean() -> FactoryBean ¹¹ÔìµÄobject£¬
+         * getBean() -> FactoryBean æ„é€ çš„objectï¼Œ
          */
         @Override
         public Object getObject() throws Exception {
@@ -61,7 +61,7 @@ public class AutoProxyCreatorTest {
     }
 
     /**
-     * ½Ó¿ÚµÄ¶¯Ì¬´úÀí£¬ -> cblib or  ½Ó¿Ú´úÀí¡£
+     * æ¥å£çš„åŠ¨æ€ä»£ç†ï¼Œ -> cblib or  æ¥å£ä»£ç†ã€‚
      */
     public static class CustomFactoryBean implements FactoryBean<ITestBean> {
         private TestBean testBean = new TestBean();

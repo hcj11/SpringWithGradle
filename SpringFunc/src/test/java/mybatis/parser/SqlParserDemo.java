@@ -24,9 +24,6 @@ public class SqlParserDemo {
 
     @Test
     public void IdentifySqlWithDurid() {
-        /**
-         * Ê¶±ðsql
-         */
         String sql = "insert into user(user_id,user_name,birthday) values(UUID(),#{userName},CURRENT_DATE),(UUID(),#{userName},CURRENT_DATE);";
         SQLParser sqlParser = new SQLParser(sql);
         log.info("=============sqlParser:{}", sqlParser.toString());

@@ -18,9 +18,9 @@ class HeaderBuilder extends CountedCompleter<Integer> {
 
     @Override
     public void compute() {
-        this.setPendingCount(1);
+//        this.setPendingCount(1);
         result = 1;
-        tryComplete();
+//        tryComplete();
     }
 
     @Override
