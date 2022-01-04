@@ -1,5 +1,6 @@
 package context.expression;
 
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
 import context.CompontScan;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -14,21 +15,30 @@ import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.context.config.ConfigFileApplicationListener;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.boot.env.YamlPropertySourceLoader;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,6 +48,17 @@ class NoPrefixCustomMap {
     Map<String, String> map;
 }
 
+@Data
+class ConfigurationCls{
+    private String name;
+}
+@ConfigurationProperties(prefix = "outercls")
+@Data
+class CustomOuterBean {
+    private String val;
+    @NestedConfigurationProperty
+    private ConfigurationCls configurationCls;
+}
 // dummy1-context.Dummy
 @ConfigurationProperties(prefix = "custom")
 @Data
@@ -64,8 +85,9 @@ class OpenBean {
 public class BeanExpression {
 
     @Data
+    @PropertySource(value = "classpath:/application.yml")
     @PropertySource(value = "classpath:/application.properties")
-    @EnableConfigurationProperties(value = {CustomMap.class, Dummy.class,DisableBean.class})
+    @EnableConfigurationProperties(value = {CustomOuterBean.class,MybatisPlusProperties.class,CustomMap.class, Dummy.class,DisableBean.class})
     @Configuration(value = "testbean")
     static class TestBean {
 
@@ -116,7 +138,12 @@ public class BeanExpression {
 
     @BeforeEach
     public void setUp(TestInfo testInfo) {
-        context = new AnnotationConfigApplicationContext(TestBean.class);
+        // configFile for parse the yaml file
+        context = new AnnotationConfigApplicationContext();
+        ConfigFileApplicationContextInitializer configFileApplicationContextInitializer = new ConfigFileApplicationContextInitializer();
+        configFileApplicationContextInitializer.initialize(context);
+        context.register(ConfigFileApplicationListener.class,TestBean.class);
+        context.refresh();
 
         context.getEnvironment().getPropertySources().forEach(propertySource -> {
             log.info("=={}", propertySource.toString());
@@ -130,13 +157,58 @@ public class BeanExpression {
         // StandardBeanExpressionResolver
 
         expressionContext = new BeanExpressionContext(beanFactory, null);
+
+    }
+    private YamlPropertySourceLoader loader = new YamlPropertySourceLoader();
+    @Test
+    void loadOriginAware() throws Exception {
+
+        Resource resource = new ClassPathResource("/application.yml", getClass());
+        List<org.springframework.core.env.PropertySource<?>> loaded = this.loader.load("resource", resource);
+        for (org.springframework.core.env.PropertySource<?> source : loaded) {
+            EnumerablePropertySource<?> enumerableSource = (EnumerablePropertySource<?>) source;
+            for (String name : enumerableSource.getPropertyNames()) {
+                System.out.println(name + " = " + enumerableSource.getProperty(name));
+            }
+        }
     }
 
+
     @Test
-    public void loadResourceInOrder() throws IOException {
+    public void readYaml(){
+
+        String yamlStr ="/application.yaml";
+        Yaml yaml = new Yaml();
+        Object load = yaml.load(yamlStr);
+        log.info("CustomOuterBean:{}",load);
+    }
+    /**
+     need load YamlPropertySourceLoader (in the ConfigFileApplicationListener)  firstly!
+     */
+    @Test
+    public void loadPropertiesWithNestedFromYml(){
+        CustomOuterBean bean = context.getBean(CustomOuterBean.class);
+        log.info("CustomOuterBean:{}",bean);
+
+    }
+    @Test
+    public void loadPropertiesWithNestedFromProperties(){
+        // load Properties.
+        CustomOuterBean bean = context.getBean(CustomOuterBean.class);
+        log.info("CustomOuterBean:{}",bean);
+        MybatisPlusProperties mybatisPlusProperties = context.getBean(MybatisPlusProperties.class);
+        log.info("MybatisPlusProperties:{}",mybatisPlusProperties);
+
+    }
+    @Test
+    public void loadResourceInOrderFromYml() throws IOException {
+        String resolvedLocation = "classpath:/application.yml";
+        loadResourceInOrder(resolvedLocation);
+    }
+
+    public void loadResourceInOrder(String resolvedLocation) throws IOException {
 
         ResourceLoader resourceLoader = new DefaultResourceLoader(com.paic.Config.class.getClassLoader());
-        String resolvedLocation = "classpath:/application.properties";
         Resource resource = resourceLoader.getResource(resolvedLocation);
 
         URI uri = resource.getURI();

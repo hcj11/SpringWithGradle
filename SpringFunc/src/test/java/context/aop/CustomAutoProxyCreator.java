@@ -12,24 +12,24 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.support.StaticMessageSource;
 
 /**
- *   extends  AbstractAutoProxyCreator  :  ¹²Í¬Ê¹ÓÃ SmartInstantiationAwareBeanPostProcessor ÌØÐÔ ´´½¨bean´úÀí£¬ ½øÐÐÀ¹½Ø´¦Àí¡£
+ *   extends  AbstractAutoProxyCreator  : SmartInstantiationAwareBeanPostProcessor
  *   createProxy()
- *    ×é¼þ:
+ *
  *    1.methodInterceptor implements Advisor
  *    2.proxy create  targetSource
  *    3.
  *
  *
- *   1. @AspectJ   patterns È·¶¨Î»ÖÃ¡£
- *   2. AbstractAutoProxyCreator:        À¹½ØfactoryBean or bean, ¼à¿Ø·½·¨µ÷ÓÃ´ÎÊý¡£ ´Ócontext,»ñÈ¡creator,È·¶¨µ÷ÓÃ´ÎÊý¡£
+ *   1. @AspectJ   patterns
+ *   2. AbstractAutoProxyCreator:       factoryBean or bean,
  *
- *   3. created from proxyfactoryBean,   ¼à¿Øbeanµ÷ÓÃ´ÎÊý¡£
+ *   3. created from proxyfactoryBean,   bean
  *   4. target
  *
  *
  *
- *   aop  ×÷Îª´úÀí¹¤³§¡£  ÓÃ×¢½â»òÕß targetSource ½øÐÐÀ¹½ØºÍ¼à¿Ø¡£
- *   targetSource   ¼à¿Ø±ÈÈç commonpool .  druidpool
+ *   aop   targetSource
+ *   targetSource    commonpool .  druidpool
  *
  *
  *  extends AbstractAutoProxyCreator{}
@@ -66,8 +66,8 @@ public class CustomAutoProxyCreator extends AbstractAutoProxyCreator {
     @Override
     protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass, String beanName, TargetSource customTargetSource) throws BeansException {
     /**
-     *  ´¥·¢Á÷³Ì
-     *  1. bean ¹¹½¨Ê±£¬ ÓÉ aop´úÀí½øÐÐÈ·ÈÏ¡£ createProxy ,
+     *  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+     *  1. bean ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ ï¿½ï¿½ aopï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½Ï¡ï¿½ createProxy ,
      *
      */
         if (StaticMessageSource.class.isAssignableFrom(beanClass)) {

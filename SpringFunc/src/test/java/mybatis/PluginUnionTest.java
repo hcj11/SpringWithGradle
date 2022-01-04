@@ -1,19 +1,13 @@
 package mybatis;
 
 import cn.hutool.core.lang.Assert;
-import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.google.common.collect.Lists;
 import com.mockrunner.mock.jdbc.MockDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.mockito.Mockito;
-import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
-import sample.mybatis.domain.User;
 import sample.mybatis.dto.UserDto;
 import sample.mybatis.mapper.MapperInterface;
 
@@ -32,7 +26,7 @@ import static org.mockito.Mockito.mock;
 
 @EnabledIf("true")
 @Slf4j
-public class PluginUnionTest extends Mybatis {
+public class PluginUnionTest extends MybatisBean {
 
     @Test
     public void aopProxySessionFactory() {

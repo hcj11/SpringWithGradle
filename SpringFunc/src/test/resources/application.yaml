@@ -3,6 +3,9 @@ outercls:
   configurationCls:
     name: hcj
 mybatis-plus:
+  mapperLocations: classpath*:/mapper1/**/*.xml
+  configuration:
+    defaultResultSetType: forward_only
   globalConfig:
     dbConfig:
       idType: input

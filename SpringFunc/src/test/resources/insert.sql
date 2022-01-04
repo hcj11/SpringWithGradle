@@ -1,0 +1,3 @@
+INSERT INTO "public"."users"("id", "user_group_id", "name", "age", "create_time", "money", "user_account_id", "user_group_name") VALUES (1, 3, 'hcj1 ', NULL, '2020-10-21 11:41:09.278063', 1.00, NULL, NULL);
+INSERT INTO "public"."users"("id", "user_group_id", "name", "age", "create_time", "money", "user_account_id", "user_group_name") VALUES (2, 3, 'hcj2 ', NULL, '2020-10-21 11:41:09.278063', 1.00, NULL, NULL);
+INSERT INTO "public"."users"("id", "user_group_id", "name", "age", "create_time", "money", "user_account_id", "user_group_name") VALUES (3, 3, 'hcj3', NULL, '2020-10-21 11:41:09.278063', 1.00, NULL, NULL);

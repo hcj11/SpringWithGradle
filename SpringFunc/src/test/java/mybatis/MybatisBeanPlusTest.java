@@ -1,61 +1,39 @@
 package mybatis;
 
-import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.lang.Assert;
-import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
-import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.mockrunner.util.common.MethodUtil;
 import context.CompontScan;
 import lombok.extern.slf4j.Slf4j;
-import mybatis.interceptor.AddClauseForBoundSqlInteceptor;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.mapping.ResultSetType;
-import org.apache.ibatis.plugin.Plugin;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.aop.support.AopUtils;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.StandardEnvironment;
-import org.yaml.snakeyaml.Yaml;
 import sample.mybatis.domain.User;
+import sample.mybatis.domain.UserAccount;
+import sample.mybatis.domain.UserTemp;
 import sample.mybatis.mapper.MapperInterface;
+import sample.mybatis.mapper.UserAccountInterface;
+import sample.mybatis.mapper.UserTempInterface;
 
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.github.pagehelper.page.PageMethod.startPage;
 
 @Slf4j
-public class MybatisPlusTest extends Mybatis{
+public class MybatisBeanPlusTest extends MybatisBean {
     @Test
     public void try1(){
         applicationContext.register(MybatisPlusConfigurationDemo.class);
         startContext();
         CompontScan.printSingleton(applicationContext);
     }
-
     @Test
     public void propertiesTest(){
         applicationContext.register(MybatisPlusConfigurationDemo.class);
@@ -72,10 +50,13 @@ public class MybatisPlusTest extends Mybatis{
 
     }
     public MapperInterface makeUpContext(){
+            return (MapperInterface)makeUpContext(MapperInterface.class);
+    }
+    public Object makeUpContext(Class cls){
         applicationContext.register(MybatisPlusConfigurationDemo.class);
         startContext();
-        MapperInterface mapperInterface = applicationContext.getBean(MapperInterface.class);
-        return mapperInterface;
+        Object bean = applicationContext.getBean(cls);
+        return bean;
     }
     /**
      todo
@@ -86,9 +67,25 @@ public class MybatisPlusTest extends Mybatis{
         MybatisPlusProperties mybatisPlusProperties = applicationContext.getBean(MybatisPlusProperties.class);
         log.info("{}",mybatisPlusProperties);
     }
-
     @Test
-    public void lambdaTestForDetele(){
+    public void sequenceTestWithGrobalConfig(){
+        UserTempInterface userTempInterface = (UserTempInterface) makeUpContext(UserTempInterface.class);
+        UserTemp other_things = UserTemp.builder().remark("other things").version(1).build();
+        userTempInterface.insert(other_things);
+
+    }
+    @Test
+    public void sequenceTest(){
+        UserAccountInterface userAccountInterface = (UserAccountInterface) makeUpContext(UserAccountInterface.class);
+        UserAccount build = UserAccount.builder().money(new BigDecimal(100)).version(1).build();
+        userAccountInterface.insert(build);
+    }
+    @Test
+    public void lambdaTestForDelete(){
+        MapperInterface mapperInterface = makeUpContext();
+        Assert.notNull(mapperInterface);
+        LambdaQueryWrapper<User> hcj1 = Wrappers.<User>lambdaQuery().eq(User::getName, "hcj");
+        int delete = mapperInterface.delete(hcj1);
 
     }
     @Test

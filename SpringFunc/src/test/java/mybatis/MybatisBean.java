@@ -1,63 +1,50 @@
 package mybatis;
-/**
- * spring-mybatis-boot
- */
 
 import cn.hutool.core.lang.Assert;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.extension.incrementer.PostgreKeyGenerator;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.github.pagehelper.PageInterceptor;
 import com.mockrunner.mock.jdbc.*;
-import context.CompontScan;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import mybatis.interceptor.AddOrgCodeForPageInteceptor;
-import mybatis.transaction.MybatisForPG;
+import mybatis.transaction.MybatisBeanForPG;
 import org.apache.ibatis.mapping.ResultSetType;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.config.ConfigFileApplicationListener;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.context.annotation.*;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 import sample.mybatis.mapper.MapperInterface;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static mybatis.Mybatis.TestTypes.*;
+import static mybatis.MybatisBean.TestTypes.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.refEq;
 import static org.mockito.Mockito.mock;
 
 @Configuration
@@ -65,17 +52,43 @@ import static org.mockito.Mockito.mock;
 class MybatisAutoConfigurationDemo {
 
 }
+
 @Configuration
-@ImportAutoConfiguration(value = {TransactionAutoConfiguration.class,DataSourceTransactionManagerAutoConfiguration.class})
+@ImportAutoConfiguration(value = {TransactionAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
 class TransactionAutoConfigurationDemo {
+}
+
+
+
+
+@Configuration
+class RouteDataSourceConfigurationDemo {
+    @Autowired
+    Map<String, DataSource> map;
+
+    @Primary
+    @Bean
+    public CustomRoutingDataSource customRoutingDataSource(Map<String, DataSource> map) {
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.putAll(map);
+
+        return new CustomRoutingDataSource(objectObjectHashMap);
+    }
+
 }
 
 @Configuration
 @ImportAutoConfiguration(value = {MybatisPlusAutoConfiguration.class})
 class MybatisPlusConfigurationDemo {
+
     @Bean
-    public CustomIdGenerateMetaObjectHandler customIdGenerateMetaObjectHandler(){
+    public CustomIdGenerateMetaObjectHandler customIdGenerateMetaObjectHandler() {
         return new CustomIdGenerateMetaObjectHandler();
+    }
+
+    @Bean
+    public PostgreKeyGenerator postgreKeyGenerator() {
+        return new PostgreKeyGenerator();
     }
 }
 
@@ -91,34 +104,97 @@ class CustomIdGenerateMetaObjectHandler implements MetaObjectHandler {
 
     }
 }
+
+enum CurrentDataSource {
+    PG(1, "pgDruidDataSource"), DRUID(2, "druidDataSource"), DEFAULT(3, "dataSource");
+    private int index;
+    private String val;
+
+    CurrentDataSource(int i, String dataSource) {
+        this.index = i;
+        this.val = dataSource;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public String getVal() {
+        return val;
+    }
+
+    public static String getValWithIndex(int index) {
+        CurrentDataSource[] values = CurrentDataSource.values();
+
+        CurrentDataSource currentDataSource = Arrays.stream(values).filter(val -> {
+            if (val.getIndex() == index) {
+                return true;
+            }
+            return false;
+        }).findFirst().orElse(DEFAULT);
+        return currentDataSource.getVal();
+
+    }
+}
+
 @Slf4j
-public class Mybatis {
+public class MybatisBean {
+
     /**
-     the unit test type of  sqlsessionFactory
+     * the unit test type of  sqlsessionFactory
      */
-    enum TestTypes{
-        PG,PLUS,EMBED;
+    enum TestTypes {
+        PG, PLUS, EMBED;
+
         public void doAction(AnnotationConfigApplicationContext applicationContext) throws SQLException {
-            if(this==PG){
+            if (this == PG) {
                 setupSqlSessionFactoryForPG(applicationContext);
-            }else if(this==EMBED){
+            } else if (this == EMBED) {
                 setupSqlSessionFactory(applicationContext);
-            }else{
-                /**
-                 org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
-                 configuration.setDefaultResultSetType(ResultSetType.FORWARD_ONLY);
-                 definition.getPropertyValues().add("configuration",configuration);
-                 */
-//                changeQualifier(applicationContext);
+            } else {
             }
         }
+    }
+
+    public static AnnotationConfigApplicationContext applicationContext = null;
+    public static AtomicReference<TestTypes> testTypes = null;
+
+    @BeforeEach
+    public void before(TestInfo testInfo) throws SQLException {
+        applicationContext = new AnnotationConfigApplicationContext();
+        ConfigFileApplicationContextInitializer configFileApplicationContextInitializer = new ConfigFileApplicationContextInitializer();
+        configFileApplicationContextInitializer.initialize(applicationContext);
+        applicationContext.register(ConfigFileApplicationListener.class,MapperConfiguration.class);
+
+        testTypes = new AtomicReference<>();
+
+        testInfo.getTestClass().ifPresent(cls -> {
+            if (MybatisBeanForPG.class.isAssignableFrom(cls)) {
+                testTypes.set(PG);
+                applicationContext.register(RouteDataSourceConfigurationDemo.class);
+                applicationContext.register(TransactionAutoConfigurationDemo.class);
+            } else if (MybatisBeanPlusTest.class.isAssignableFrom(cls)) {
+                testTypes.set(PLUS);
+            } else {
+                testTypes.set(EMBED);
+            }
+        });
+        testTypes.get().doAction(applicationContext);
+
+    }
+
+    protected void startContext() {
+        applicationContext.refresh();
+        applicationContext.start();
+        // this will throw an exception if the beans cannot be found
+        applicationContext.getBean("sqlSessionFactory");
     }
 
     @PropertySource(value = "classpath:/application.yml")
     @Data
     @Configuration(proxyBeanMethods = false)
     @MapperScan(basePackages = {"sample.mybatis.mapper", "sample.mybatis.domain"})
-    public static class MapperConfiguration  implements BeanFactoryPostProcessor {
+    public static class MapperConfiguration implements BeanFactoryPostProcessor {
 
         @Qualifier("mapperInterface")
         @Autowired
@@ -126,14 +202,15 @@ public class Mybatis {
 
         @Resource
         private MapperInterface mapperInterface2;
+
         @Bean
-        public ConfigurationCustomizer configurationCustomizer(){
-           return  (org.apache.ibatis.session.Configuration con)->{
-               if(con.getClass().isAssignableFrom(MybatisConfiguration.class) ){
-                   MybatisConfiguration mybatisConfiguration =  (MybatisConfiguration)con;
-                   mybatisConfiguration.setDefaultResultSetType(ResultSetType.FORWARD_ONLY);
-               }
-           };
+        public ConfigurationCustomizer configurationCustomizer() {
+            return (org.apache.ibatis.session.Configuration con) -> {
+                if (con.getClass().isAssignableFrom(MybatisConfiguration.class)) {
+                    MybatisConfiguration mybatisConfiguration = (MybatisConfiguration) con;
+                    mybatisConfiguration.setDefaultResultSetType(ResultSetType.FORWARD_ONLY);
+                }
+            };
         }
 
         @Bean
@@ -151,7 +228,6 @@ public class Mybatis {
             return pageInterceptor;
         }
 
-        @Primary
         @Bean
         public static DruidDataSource pgDruidDataSource() {
             DruidDataSource ds = new DruidDataSource();
@@ -244,6 +320,23 @@ public class Mybatis {
             return mockPreparedStatement;
         }
 
+        public static MockPreparedStatement metaExtractForSequence() throws SQLException {
+            MockPreparedStatement mockPreparedStatement = mock(MockPreparedStatement.class);
+            MockResultSet resultSetMock = mock(MockResultSet.class);
+
+            MockResultSetMetaData mockResultSetMetaData = new MockResultSetMetaData();
+            mockResultSetMetaData.setColumnCount(1);
+            mockResultSetMetaData.setColumnLabel(1, "nextval");
+            mockResultSetMetaData.setColumnName(1, "nextval");
+            mockResultSetMetaData.setColumnType(1, Types.VARCHAR);
+            mockResultSetMetaData.setColumnClassName(1, String.class.getName());
+            given(resultSetMock.getMetaData()).willReturn(mockResultSetMetaData);
+            given(resultSetMock.getString("nextval")).willReturn("10");
+            given(resultSetMock.next()).willReturn(true, false);
+            given(mockPreparedStatement.getResultSet()).willReturn(resultSetMock);
+            return mockPreparedStatement;
+        }
+
         public static MockPreparedStatement metaExtractForCount() throws SQLException {
             MockPreparedStatement mockPreparedStatement = mock(MockPreparedStatement.class);
             MockResultSet resultSetMock = mock(MockResultSet.class);
@@ -252,7 +345,7 @@ public class Mybatis {
             mockResultSetMetaData.setColumnCount(1);
             mockResultSetMetaData.setColumnLabel(1, "tmp_count");
             mockResultSetMetaData.setColumnName(1, "tmp_count");
-            mockResultSetMetaData.setColumnType(1, Types.INTEGER);
+            mockResultSetMetaData.setColumnType(1, Types.BIGINT);
             mockResultSetMetaData.setColumnClassName(1, Long.class.getName());
             given(resultSetMock.getMetaData()).willReturn(mockResultSetMetaData);
             given(resultSetMock.getLong("tmp_count")).willReturn(10L);
@@ -273,16 +366,27 @@ public class Mybatis {
             MockPreparedStatement mockPreparedStatementForVoid = metaExtractForVoid();
             MockPreparedStatement metaExtractForMap = metaExtractForMap();
             MockPreparedStatement metaExtractForCount = metaExtractForCount();
+            MockPreparedStatement metaExtractForSequence = metaExtractForSequence();
             MockPreparedStatement metaExtractForCount2 = metaExtractForCount();
             /**
              *  protected abstract Statement instantiateStatement(Connection connection) throws SQLException;
              *  connection.createStatement() => mockPrepareStatement.
              */
+            given(mockcon.prepareStatement("INSERT INTO user_temp  ( id,\n" +
+                    "remark,\n" +
+                    "version )  VALUES  ( ?,\n" +
+                    "?,\n" +
+                    "? )"))
+                    .willReturn(mockPreparedStatement2);
+
+            given(mockcon.prepareStatement("DELETE FROM user \n" +
+                    " \n" +
+                    " WHERE (name = ?)"))
+                    .willReturn(mockPreparedStatement2);
             given(mockcon.prepareStatement("SELECT  \n" +
                     "id,name\n" +
                     "  FROM user"))
                     .willReturn(mockPreparedStatement2);
-
             given(mockcon.prepareStatement("SELECT id,name,phone,version FROM user WHERE id IN ( ? , ? , ? , ? , ? , ? )"))
                     .willReturn(mockPreparedStatement2);
             given(mockcon.prepareStatement("select * from users where id=? and id1=? and orgCode=role2"))
@@ -293,7 +397,8 @@ public class Mybatis {
                     " \n" +
                     " WHERE (phone = ?)"))
                     .willReturn(mockPreparedStatement2);
-
+            given(mockcon.prepareStatement("select nextval('user_account_sequence')"))
+                    .willReturn(metaExtractForSequence);
             given(mockcon.prepareStatement("select count(0) from ( \n" +
                     "SELECT  \n" +
                     "id,name\n" +
@@ -382,6 +487,12 @@ public class Mybatis {
                     .willReturn(mockPreparedStatementForVoid);
             given(mockcon.prepareStatement("select 3", 1003, 1007))
                     .willReturn(mockPreparedStatementForVoid);
+            given(mockcon.prepareStatement("INSERT INTO user_account  ( id,\n" +
+                    "money,\n" +
+                    "version )  VALUES  ( ?,\n" +
+                    "?,\n" +
+                    "? )"))
+                    .willReturn(mockPreparedStatement);
             given(mockcon.prepareStatement("UPDATE user  SET name=?,\n" +
                     "phone=?,\n" +
                     "version=?,\n" +
@@ -392,8 +503,8 @@ public class Mybatis {
                     " WHERE (phone = ? AND version = ?)"))
                     .willReturn(mockPreparedStatement);
 
-            given(mockcon.prepareStatement("update user set name='hcj'",1003,1007)).willReturn(mockPreparedStatement);
-            given(mockcon.prepareStatement("update user set name='hcj' where id=1",1003,1007)).willReturn(mockPreparedStatement2);
+            given(mockcon.prepareStatement("update user set name='hcj'", 1003, 1007)).willReturn(mockPreparedStatement);
+            given(mockcon.prepareStatement("update user set name='hcj' where id=1", 1003, 1007)).willReturn(mockPreparedStatement2);
             given(mockcon.prepareStatement("UPDATE user  SET name=?,\n" +
                     "phone=?,\n" +
                     "version=?  \n" +
@@ -411,7 +522,7 @@ public class Mybatis {
                     "?,\n" +
                     "?,\n" +
                     "? )"))
-                .willReturn(mockPreparedStatement);
+                    .willReturn(mockPreparedStatement);
             given(mockcon.prepareStatement("insert into users(username) \n" +
                     "         values(  \n" +
                     "            ?\n" +
@@ -453,55 +564,22 @@ public class Mybatis {
 
         @Override
         public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-            if(testTypes.get()== PLUS){
-//                new Delete
+            if (testTypes.get() == PLUS) {
                 OptimisticLockerInterceptor optimisticLockerInterceptor = new OptimisticLockerInterceptor();
-                beanFactory.registerSingleton("optimisticLockerInterceptor",optimisticLockerInterceptor);
-//                beanFactory.registerSingleton();
-                BeanDefinition pgDruidDataSource = beanFactory.getBeanDefinition("pgDruidDataSource");
-                pgDruidDataSource.setPrimary(false);
+                beanFactory.registerSingleton("optimisticLockerInterceptor", optimisticLockerInterceptor);
+                /**
+                 instead of the  abstractRoutingDataSource ,
+                 BeanDefinition pgDruidDataSource = beanFactory.getBeanDefinition("pgDruidDataSource");
+                 pgDruidDataSource.setPrimary(false);
+                 BeanDefinition dataSource = beanFactory.getBeanDefinition("dataSource");
+                 dataSource.setPrimary(true);
+                 */
 
-                BeanDefinition dataSource = beanFactory.getBeanDefinition("dataSource");
-                dataSource.setPrimary(true);
             }
 
         }
 
     }
-
-    public static AnnotationConfigApplicationContext applicationContext;
-    public static AtomicReference<TestTypes> testTypes =  null;
-
-
-    @BeforeEach
-    public void before(TestInfo testInfo) throws SQLException {
-        applicationContext = new AnnotationConfigApplicationContext();
-        applicationContext.register(MapperConfiguration.class);
-        testTypes =new AtomicReference<>();
-
-        testInfo.getTestClass().ifPresent(cls -> {
-            if (MybatisForPG.class.isAssignableFrom(cls)) {
-                testTypes.set(PG);
-                // import transaction bean
-                applicationContext.register(TransactionAutoConfigurationDemo.class);
-            }else if(MybatisPlusTest.class.isAssignableFrom(cls)){
-                testTypes.set(PLUS);
-            }else{
-                testTypes.set(EMBED);
-            }
-        });
-        testTypes.get().doAction(applicationContext);
-
-    }
-
-    protected void startContext() {
-
-        applicationContext.refresh();
-        applicationContext.start();
-        // this will throw an exception if the beans cannot be found
-        applicationContext.getBean("sqlSessionFactory");
-    }
-
 
     private static void setupSqlSessionFactoryForPG(AnnotationConfigApplicationContext applicationContext) throws SQLException {
 
@@ -520,7 +598,7 @@ public class Mybatis {
         definition.setBeanClass(SqlSessionFactoryBean.class);
         org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
         configuration.setDefaultResultSetType(ResultSetType.FORWARD_ONLY);
-        definition.getPropertyValues().add("configuration",configuration);
+        definition.getPropertyValues().add("configuration", configuration);
         definition.getPropertyValues().add("dataSource", MapperConfiguration.dataSource());
         Interceptor interceptor = MapperConfiguration.AddOrgCodeForPageInteceptor();
         Interceptor pageInterceptor = MapperConfiguration.PageInterceptor();

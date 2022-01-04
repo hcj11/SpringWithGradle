@@ -14,16 +14,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.support.AopUtils;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionTemplate;
 import sample.mybatis.mapper.MapperInterface;
 
 import java.lang.reflect.Method;
@@ -31,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 @Slf4j
-public class MybatisOtherTest extends Mybatis{
+public class MybatisBeanOtherTest extends MybatisBean {
 
     @Test
     public void cacheTest(){

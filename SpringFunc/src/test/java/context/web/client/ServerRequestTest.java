@@ -43,6 +43,7 @@ public class ServerRequestTest {
         HttpInvokerProxyFactoryBean httpInvokerProxyFactoryBean = new HttpInvokerProxyFactoryBean();
         httpInvokerProxyFactoryBean.setServiceInterface(null);
         httpInvokerProxyFactoryBean.setServiceUrl("");
+
     }
     @Test
     public void feginTestWithHttpClient(){

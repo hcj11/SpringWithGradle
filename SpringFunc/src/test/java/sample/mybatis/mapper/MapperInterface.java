@@ -148,4 +148,14 @@ public interface MapperInterface extends BaseMapper<User> {
             "</script>")
     public List<Map<String,String>> queryJsonBInPg(@Param("val") int val);
 
+    @Delete("TRUNCATE users;")
+    void truncate();
+
+    @Select(value = "select count(1)>0 from users where id=1 and user_group_name='党员 1 ' ;")
+    boolean findSomeThings();
+
+    @Select(value = "select count(1)>0 from users where id=3 and name='hcj3'\n" +
+            "union all\n" +
+            "select count(1)>0 from users where id<3 and name in ('hcj 1 ','hcj 2 ') ;")
+    List<Boolean> findAnotherThings();
 }
