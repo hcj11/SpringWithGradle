@@ -15,6 +15,8 @@ springBoot {
 }
 
 dependencies {
+// https://mvnrepository.com/artifact/tk.mybatis/mapper
+    implementation group: 'tk.mybatis', name: 'mapper', version: '3.5.2'
 
     implementation fileTree(dir: 'libs', include: ['mockrunner*.jar'])
 

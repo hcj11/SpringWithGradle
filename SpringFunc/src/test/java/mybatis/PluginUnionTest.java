@@ -8,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
+import sample.mybatis.domain.UserTemp;
 import sample.mybatis.dto.UserDto;
 import sample.mybatis.mapper.MapperInterface;
+import sample.mybatis.mapper.UserTempInterface;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,6 +29,23 @@ import static org.mockito.Mockito.mock;
 @EnabledIf("true")
 @Slf4j
 public class PluginUnionTest extends MybatisBean {
+
+    public MapperInterface makeUpContext(){
+        return (MapperInterface)makeUpContext(MapperInterface.class);
+    }
+    public Object makeUpContext(Class cls){
+        // MapperScannerConfigurer
+        applicationContext.register(MapperConfiguration.class);
+        startContext();
+        Object bean = applicationContext.getBean(cls);
+        return bean;
+    }
+    @Test
+    public void tkMybatisTest(){
+        UserTemp others = UserTemp.builder().remark("others").build();
+        UserTempInterface userTempInterface = (UserTempInterface)makeUpContext(UserTempInterface.class);
+        userTempInterface.insertSelective(others);
+    }
 
     @Test
     public void aopProxySessionFactory() {
@@ -68,6 +87,7 @@ public class PluginUnionTest extends MybatisBean {
 
 
     }
+
     @Test
     public void ognlTestForPageWithList() throws Exception {
         applicationContext.register(MapperConfiguration.class);

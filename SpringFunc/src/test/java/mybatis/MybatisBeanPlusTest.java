@@ -88,6 +88,12 @@ public class MybatisBeanPlusTest extends MybatisBean {
         int delete = mapperInterface.delete(hcj1);
 
     }
+//    @Test
+//    public void tkMybatisTest(){
+//        UserTemp others = UserTemp.builder().remark("others").build();
+//        UserTempInterface userTempInterface = (UserTempInterface)makeUpContext(UserTempInterface.class);
+//        userTempInterface.insertSelective(others);
+//    }
     @Test
     public void lambdaTestForUpdate(){
         /**

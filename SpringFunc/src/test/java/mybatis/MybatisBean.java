@@ -35,6 +35,9 @@ import org.springframework.boot.context.config.ConfigFileApplicationListener;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.context.annotation.*;
 import sample.mybatis.mapper.MapperInterface;
+import tk.mybatis.mapper.common.BaseMapper;
+import tk.mybatis.mapper.common.Mapper;
+import tk.mybatis.spring.mapper.MapperScannerConfigurer;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -60,7 +63,17 @@ class TransactionAutoConfigurationDemo {
 
 
 
-
+@Configuration
+class CustomMapperScannerConfigurer{
+    @Bean
+    public MapperScannerConfigurer mapperScannerConfigurer(){
+        MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
+        mapperScannerConfigurer.setBasePackage("sample.mybatis.mapper,sample.mybatis.domain");
+        mapperScannerConfigurer.setMarkerInterface(Mapper.class);
+//        mapperScannerConfigurer.setMarkerInterface();
+        return mapperScannerConfigurer;
+    }
+}
 @Configuration
 class RouteDataSourceConfigurationDemo {
     @Autowired
@@ -167,11 +180,10 @@ public class MybatisBean {
         applicationContext.register(ConfigFileApplicationListener.class,MapperConfiguration.class);
 
         testTypes = new AtomicReference<>();
-
+        applicationContext.register(RouteDataSourceConfigurationDemo.class);
         testInfo.getTestClass().ifPresent(cls -> {
             if (MybatisBeanForPG.class.isAssignableFrom(cls)) {
                 testTypes.set(PG);
-                applicationContext.register(RouteDataSourceConfigurationDemo.class);
                 applicationContext.register(TransactionAutoConfigurationDemo.class);
             } else if (MybatisBeanPlusTest.class.isAssignableFrom(cls)) {
                 testTypes.set(PLUS);
@@ -377,6 +389,9 @@ public class MybatisBean {
                     "version )  VALUES  ( ?,\n" +
                     "?,\n" +
                     "? )"))
+                    .willReturn(mockPreparedStatement2);
+
+            given(mockcon.prepareStatement("INSERT INTO user_temp  ( remark ) VALUES( ? )",1003,1007))
                     .willReturn(mockPreparedStatement2);
 
             given(mockcon.prepareStatement("DELETE FROM user \n" +
