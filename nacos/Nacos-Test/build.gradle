@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    implementation(project(':DubboApi'))
+    implementation 'org.springframework.cloud:spring-cloud-context'
+    implementation 'org.springframework.cloud:spring-cloud-commons'
+}
+
+test {
+    systemProperty 'o' ,'v'
+    useJUnitPlatform({
+        maxParallelForks(2)
+        forkEvery(2)
+    })
+}

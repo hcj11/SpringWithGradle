@@ -1,0 +1,15 @@
+rootProject.name = 'nacos'
+
+include(':Nacos-Consumer')
+include(':Nacos-Provider')
+include(':Nacos-Registry')
+include(':Nacos-Test')
+include(':Nacos-Log4j')
+include(':DubboApi')
+
+findProject(':DubboApi')?.name = 'DubboApi'
+findProject(':Nacos-Consumer')?.name = 'Nacos-Consumer'
+findProject(':Nacos-Provider')?.name = 'Nacos-Provider'
+findProject(':Nacos-Registry')?.name = 'Nacos-Registry'
+findProject(':Nacos-Test')?.name = 'Nacos-Test'
+findProject(':Nacos-Log4j')?.name = 'Nacos-Log4j'

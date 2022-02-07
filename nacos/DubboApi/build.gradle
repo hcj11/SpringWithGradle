@@ -1,0 +1,32 @@
+plugins {
+//    id 'java'
+    id 'java-library'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}
+
+task hello {
+    doLast {
+        System.out.println('==parent:=' + parent?.name);
+        rootProject.allprojects.forEach( {
+            System.out.println('==1=' + it.name)
+        });
+    }
+}
+
+jar{
+    def d = UUID.randomUUID().toString();
+    archiveBaseName.set('dubboApi-'+d)
+}
+test {
+    useJUnitPlatform()
+}
