@@ -2,8 +2,8 @@ package context.aop;
 
 import cn.hutool.aop.aspects.SimpleAspect;
 import cn.hutool.core.lang.Assert;
-import domain.ITestBean;
-import domain.TestBean;
+import context.domain.ITestBean;
+import context.domain.TestBean;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;

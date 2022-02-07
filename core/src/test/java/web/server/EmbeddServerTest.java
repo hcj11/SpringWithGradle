@@ -1,6 +1,7 @@
 package web.server;
 import com.CustomDtoWithScope;
 import com.ScopeTest;
+import com.api.UserInterface;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.log.LogAutoConfiguration;
 import com.print.PrintUtils;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.CoyoteInputStream;
 import org.apache.tomcat.util.net.NioEndpoint;
 import org.assertj.core.util.Lists;
+import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +24,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
+import org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -37,11 +41,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +61,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -76,6 +85,7 @@ public class EmbeddServerTest {
     public void setPort(int port) {
         this.port = port;
     }
+
 
     @Autowired
     private TestRestTemplate testRestTemplate;
@@ -102,6 +112,32 @@ public class EmbeddServerTest {
         }
 
         private  volatile ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+        public static class CustomUserInterface implements UserInterface{
+            @Override
+            public String getName() {
+                return "hcj";
+            }
+        }
+        @Bean
+        public HandlerMapping handlerMapping() {
+            SimpleUrlHandlerMapping simpleUrlHandlerMapping = new SimpleUrlHandlerMapping();
+            Map<String, HttpInvokerServiceExporter> map = Maps.newHashMap("/testforRMI", httpInvokerServiceExporter());
+            simpleUrlHandlerMapping.setUrlMap(map);
+            return simpleUrlHandlerMapping;
+        }
+
+        /** SimpleUrlHandlerMapping
+         * testforRMI
+         */
+        @Bean
+        public HttpInvokerServiceExporter httpInvokerServiceExporter(){
+            HttpInvokerServiceExporter httpInvokerServiceExporter = new HttpInvokerServiceExporter();
+            httpInvokerServiceExporter.setServiceInterface(UserInterface.class);
+            httpInvokerServiceExporter.setService(new CustomUserInterface());
+            httpInvokerServiceExporter.afterPropertiesSet();;
+            return httpInvokerServiceExporter;
+        }
 
         @Override
         public void configureAsyncSupport(AsyncSupportConfigurer configurer) {

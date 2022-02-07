@@ -1,8 +1,6 @@
-package domain;
+package context.domain;
 
 import lombok.Data;
-
-import java.util.Date;
 
 @Data
 public class SerialCustomBean {

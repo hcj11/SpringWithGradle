@@ -1,4 +1,4 @@
-package domain;
+package context.domain;
 
 public interface ITestBean {
     public String getAge();

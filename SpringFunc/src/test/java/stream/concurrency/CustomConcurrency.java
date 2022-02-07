@@ -289,9 +289,10 @@ public class CustomConcurrency {
                 }
             }).start();
         }
+        ArrayList<Thread> threads = Lists.<Thread>newArrayList();
         int j = 6; // 6
         while ((j--) != 0) {
-            new Thread(() -> {
+            threads.add(new Thread(() -> {
                 int i1 = ThreadLocalRandom.current().nextInt(100);
                 try {
                     log.info("put bean:{}", i1 + "");
@@ -299,13 +300,16 @@ public class CustomConcurrency {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }).start();
+            }));
         }
-
-        synchronized (lock) {
-            lock.wait();
+        threads.parallelStream().forEach(t->{t.start();});
+        while (true){
+            Thread.sleep(2000);
+            threads.stream().
+                    filter(t->{return t.getState()!= Thread.State.TERMINATED;}).forEach(t->{
+                        log.info("not TERMINATED thread state:{},name:{}",t.getState().name(),t.getName());
+            });
         }
-
 
     }
 

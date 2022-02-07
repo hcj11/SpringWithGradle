@@ -26,9 +26,9 @@ import java.nio.file.StandardOpenOption;
 @Configuration
 @EnableEncryptableProperties
 class Jasypt implements InitializingBean {
-    static Path path = Paths.get("G:\\zkui\\允许创建用户.reg");
-    static Path path_tmp = Paths.get("G:\\zkui\\允许创建用户.reg_tmp");
-    static Path path_new  = Paths.get("G:\\zkui\\允许创建用户.reg_new");
+    static Path path = Paths.get("G:\\zkui\\1.reg");
+    static Path path_tmp = Paths.get("G:\\zkui\\2.reg_tmp");
+    static Path path_new  = Paths.get("G:\\zkui\\3.reg_new");
     @Value("${jasypt.encryptor.password}")
     private String password;
     {

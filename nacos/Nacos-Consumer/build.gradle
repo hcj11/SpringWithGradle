@@ -10,11 +10,12 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-    implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:' + "${property('alibaba.version')}"
+    implementation(project(':DubboApi'))
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform({
+        maxParallelForks(2)
+        forkEvery(2)
+    })
 }

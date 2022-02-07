@@ -4,10 +4,9 @@ include 'SpringFunc'
 include 'BootDemo'
 include 'Swagger'
 include 'CustomStarter'
-include 'nacos:Nacos-Consumer'
-findProject(':nacos:Nacos-Consumer')?.name = 'Nacos-Consumer'
-include 'nacos:Nacos-Provider'
-findProject(':nacos:Nacos-Provider')?.name = 'Nacos-Provider'
+
+includeBuild('./nacos')
+
 include 'JavaConcurrency'
 include 'Algorithm'
 include 'APIProject'

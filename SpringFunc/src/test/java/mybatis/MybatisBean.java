@@ -68,9 +68,8 @@ class CustomMapperScannerConfigurer{
     @Bean
     public MapperScannerConfigurer mapperScannerConfigurer(){
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
-        mapperScannerConfigurer.setBasePackage("sample.mybatis.mapper,sample.mybatis.domain");
+        mapperScannerConfigurer.setBasePackage("sample.mybatis.mapper,sample.mybatis.context.domain");
         mapperScannerConfigurer.setMarkerInterface(Mapper.class);
-//        mapperScannerConfigurer.setMarkerInterface();
         return mapperScannerConfigurer;
     }
 }
@@ -205,7 +204,7 @@ public class MybatisBean {
     @PropertySource(value = "classpath:/application.yml")
     @Data
     @Configuration(proxyBeanMethods = false)
-    @MapperScan(basePackages = {"sample.mybatis.mapper", "sample.mybatis.domain"})
+    @MapperScan(basePackages = {"sample.mybatis.mapper", "sample.mybatis.context.domain"})
     public static class MapperConfiguration implements BeanFactoryPostProcessor {
 
         @Qualifier("mapperInterface")
@@ -414,6 +413,8 @@ public class MybatisBean {
                     .willReturn(mockPreparedStatement2);
             given(mockcon.prepareStatement("select nextval('user_account_sequence')"))
                     .willReturn(metaExtractForSequence);
+            given(mockcon.prepareStatement("SELECT COUNT(*)  FROM user_temp  WHERE       (  remark = ? )",1003,1007))
+                    .willReturn(metaExtractForCount);
             given(mockcon.prepareStatement("select count(0) from ( \n" +
                     "SELECT  \n" +
                     "id,name\n" +

@@ -1,4 +1,4 @@
-package context;
+package context.scan;
 
 import cn.hutool.core.lang.Assert;
 import lombok.AllArgsConstructor;
@@ -43,7 +43,7 @@ public class CompontScan {
     @Test
     public void match() {
         Pattern compile = Pattern.compile("[\\u4E00-\\u9FA5]+");
-        boolean b = compile.matcher("Ê²Ã´¶¼Ã»ÓÐnothing11").find();
+        boolean b = compile.matcher("nothing11").find();
         Assert.isTrue(b);
     }
 
@@ -63,7 +63,7 @@ public class CompontScan {
             return new TestBean();
         }
     }
-    // useDefaultFilters=true ,¸ù¾Ý°ü½øÐÐÉ¨ÃèºÍÆ¥Åä ²¢ÇÒ¼ÓÉÏincludeFilters µÄ¹ýÂË·½·¨
+    // useDefaultFilters=true ,default the other filter condition not take effect,
     @ComponentScan(
             useDefaultFilters = false,
             includeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {FooService.SubFooService.class})},
@@ -89,7 +89,7 @@ public class CompontScan {
 
 
     }
-    // springboot Ô­À´µÄÅäÖÃÊÇ·ñ»áÉúÐ§¡££¬
+    // springboot Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½
     @ComponentScan(useDefaultFilters = false,
             includeFilters = {@ComponentScan.Filter(type = FilterType.CUSTOM, classes = {CustomTypeFilter.class})},
             excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = CustomA.class)},
@@ -97,7 +97,7 @@ public class CompontScan {
     )
     static class CustomA {
         /**
-         * ÀÁ³õÊ¼»¯
+         * ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
          */
         public CustomTypeFilter.KCustomA kCustomA() {
             return new CustomTypeFilter.KCustomA();
@@ -217,7 +217,7 @@ public class CompontScan {
     }
 
     /**
-     * ComponentScan  scan Component ÏÂÃæµÄbeanDefinition
+     * ComponentScan  scan Component ï¿½ï¿½ï¿½ï¿½ï¿½beanDefinition
      */
     @Test
     public void bareTest() {
@@ -232,7 +232,7 @@ public class CompontScan {
     }
 
     /**
-     * ½âñî¡£
+     * ï¿½ï¿½ï¿½î¡£
      */
     @Test
     public void testGenericsBasedFieldInjectionWithVariables() {
@@ -295,7 +295,6 @@ public class CompontScan {
     }
 
     /**
-     * Í¨¹ý@import, »òÕß ImportBeanDefinitionRegistrar ¸ù¾Ý²ÎÊý¶¯Ì¬µ¼Èëconfiguration
      *
      * @importWare ,
      */

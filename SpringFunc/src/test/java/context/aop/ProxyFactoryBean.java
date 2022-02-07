@@ -1,18 +1,16 @@
 package context.aop;
 
-import domain.ITestBean;
+import context.domain.ITestBean;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.junit.jupiter.api.Test;
-import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.aop.support.DefaultBeanFactoryPointcutAdvisor;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.target.PrototypeTargetSource;
 import org.springframework.aop.target.ThreadLocalTargetSource;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -1,6 +1,5 @@
-package domain;
+package context.domain;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +9,7 @@ public class TestBean implements ITestBean{
     private String age;
     private String name;
     /**
-     * ·òÈË
+     * ï¿½ï¿½ï¿½ï¿½
      */
     private ITestBean spouse;
 

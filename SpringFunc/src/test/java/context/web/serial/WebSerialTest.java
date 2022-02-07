@@ -3,22 +3,17 @@ package context.web.serial;
 import cn.hutool.core.lang.Assert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import domain.SerialCustomBean;
+import context.domain.SerialCustomBean;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.actuate.metrics.web.servlet.LongTaskTimingHandlerInterceptor;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.data.redis.core.convert.RedisCustomConversions;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractGenericHttpMessageConverter;
-import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -1,7 +1,8 @@
-package context.remote;
+package context.remote.context;
 
 import cn.hutool.core.lang.Assert;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.remoting.RemoteLookupFailureException;
 import org.springframework.remoting.rmi.RmiProxyFactoryBean;
@@ -19,6 +20,7 @@ public class RMITest {
             return "hcj";
         }
     }
+    @EqualsAndHashCode(callSuper = false)
     @Data
     public class CustomRmiProxyFactoryBean extends RmiProxyFactoryBean{
         @Override

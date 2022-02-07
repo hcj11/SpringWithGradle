@@ -702,7 +702,7 @@ utils.createHtmlfile = function (iframe_url, error_callback) {
 
     doc.open();
     doc.write('<html><s' + 'cript>' +
-              'document.domain="' + document.domain + '";' +
+              'document.context.domain="' + document.domain + '";' +
               '</s' + 'cript></html>');
     doc.close();
     doc.parentWindow[WPrefix] = _window[WPrefix];
@@ -1527,7 +1527,7 @@ var jsonPGenericReceiver = function(url, callback) {
  */
 
 // The simplest and most robust transport, using the well-know cross
-// domain hack - JSONP. This transport is quite inefficient - one
+// context.domain hack - JSONP. This transport is quite inefficient - one
 // mssage could use up to one http request. But at least it works almost
 // everywhere.
 // Known limitations:
@@ -1729,9 +1729,9 @@ XdrPollingTransport.roundTrips = 2; // preflight, ajax
  */
 
 // Few cool transports do work only for same-origin. In order to make
-// them working cross-domain we shall use iframe, served form the
-// remote domain. New browsers, have capabilities to communicate with
-// cross domain iframe, using postMessage(). In IE it was implemented
+// them working cross-context.domain we shall use iframe, served form the
+// remote context.domain. New browsers, have capabilities to communicate with
+// cross context.domain iframe, using postMessage(). In IE it was implemented
 // from IE 8+, but of course, IE got some details wrong:
 //    http://msdn.microsoft.com/en-us/library/cc197015(v=VS.85).aspx
 //    http://stevesouders.com/misc/test-postmessage.php
@@ -1883,7 +1883,7 @@ SockJS.bootstrap_iframe = function() {
 
             if (!utils.isSameOriginUrl(trans_url) ||
                 !utils.isSameOriginUrl(base_url)) {
-                utils.log("Can't connect to different domain from within an " +
+                utils.log("Can't connect to different context.domain from within an " +
                           "iframe. (" + JSON.stringify([_window.location.href, trans_url, base_url]) +
                           ")");
                 return;
@@ -1989,7 +1989,7 @@ InfoReceiverIframe.prototype = new EventEmitter(['finish']);
 
 
 var InfoReceiverFake = function() {
-    // It may not be possible to do cross domain AJAX to get the info
+    // It may not be possible to do cross context.domain AJAX to get the info
     // data, for example for IE7. But we want to run JSONP, so let's
     // fake the response, with rtt=2s (rto=6s).
     var that = this;

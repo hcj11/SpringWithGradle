@@ -226,6 +226,7 @@ public class BeanExpression {
         log.info("map:{}",beansOfType);
         Set<String> strings = beansOfType.keySet();
         Assert.assertEquals(strings.toArray(new String[0]),new String[]{"dummy","dummy1-context.expression.Dummy"});
+        Assert.assertTrue(beansOfType.get("dummy")!=beansOfType.get("dummy1-context.expression.Dummy"));
         Assert.assertEquals(beansOfType.get("dummy"),beansOfType.get("dummy1-context.expression.Dummy"));
         Assert.assertThrows(NoUniqueBeanDefinitionException.class,()->{context.getBean(Dummy.class);});
 
