@@ -16,19 +16,19 @@ class OrgCodeDomain{
 public class UserService implements Shopping{
     public void showMap(Map map){}
     public void shop(String name) {
-        System.out.println(name+"购票!!!");
+        System.out.println(name+"sold out !!!");
     }
     public void shopError(String name) {
        throw new RuntimeException("error");
     }
     public void addCols(OrgCodeDomain name){
-        Assert.isTrue(name.getName().equals("威海市--weihai"));
+        Assert.isTrue(name.getName().equals("hello--weihai"));
     }
     public void addColsWithMap(OrgCodeDomain name, HashMap hashMap) {
-        Assert.isTrue(name.getName().equals("威海市--weihai"));
+        Assert.isTrue(name.getName().equals("hellow--weihai"));
     }
     public void addColsWithString(String name) {
-        Assert.isFalse(name.equals("威海市--weihai"));
+        Assert.isFalse(name.equals("hello--weihai"));
     }
 
 

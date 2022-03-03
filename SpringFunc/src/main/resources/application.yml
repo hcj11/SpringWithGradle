@@ -5,6 +5,7 @@ logging:
   config: classpath:config/logback-boot.xml
   # cloud.
 spring:
+  application:
 #  cloud:
 #    nacos:
 #      config:

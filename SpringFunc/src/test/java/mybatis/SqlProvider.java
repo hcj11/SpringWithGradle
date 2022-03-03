@@ -5,6 +5,9 @@ import com.alibaba.druid.sql.parser.SQLSelectParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.type.JdbcType;
+
+import java.lang.reflect.InvocationTargetException;
+
 @Slf4j
 public class SqlProvider {
     /**
@@ -17,6 +20,9 @@ public class SqlProvider {
     public String getSqlProperties(@Param("val") String val) {
         return "select ${val}";
     }
+
+
+
 //    public static void main(String[] args) {
 //        SQLSelectParser ;
 

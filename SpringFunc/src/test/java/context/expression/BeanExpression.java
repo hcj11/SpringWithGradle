@@ -5,6 +5,7 @@ import context.CompontScan;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -36,7 +37,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -139,6 +139,7 @@ public class BeanExpression {
     @BeforeEach
     public void setUp(TestInfo testInfo) {
         // configFile for parse the yaml file
+        // and springboot app can load the listener!!!
         context = new AnnotationConfigApplicationContext();
         ConfigFileApplicationContextInitializer configFileApplicationContextInitializer = new ConfigFileApplicationContextInitializer();
         configFileApplicationContextInitializer.initialize(context);
@@ -228,7 +229,7 @@ public class BeanExpression {
         Assert.assertEquals(strings.toArray(new String[0]),new String[]{"dummy","dummy1-context.expression.Dummy"});
         Assert.assertTrue(beansOfType.get("dummy")!=beansOfType.get("dummy1-context.expression.Dummy"));
         Assert.assertEquals(beansOfType.get("dummy"),beansOfType.get("dummy1-context.expression.Dummy"));
-        Assert.assertThrows(NoUniqueBeanDefinitionException.class,()->{context.getBean(Dummy.class);});
+        Assertions.assertThrows(NoUniqueBeanDefinitionException.class,()->{context.getBean(Dummy.class);});
 
     }
     @Test

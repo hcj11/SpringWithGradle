@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutorService;
 @Slf4j
 public class AsyncResult {
     /**
-     * ½âñî
+     *
      */
     @Qualifier("e1")
     @Async
@@ -53,8 +53,8 @@ public class AsyncResult {
     @Test
     public void test1() throws Exception {
         /**
-         * ¹¹½¨´úÀí£¬¶Ô²ÎÊý½øÐÐÀ¹½Ø£¬ aspect + proxyFactory
-         * ÌáÇ°¶Ô²ÎÊý£¬½øÐÐ¹ýÂË¡£
+         * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ aspect + proxyFactory
+         * ï¿½ï¿½Ç°ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹ï¿½ï¿½Ë¡ï¿½
          */
 
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(

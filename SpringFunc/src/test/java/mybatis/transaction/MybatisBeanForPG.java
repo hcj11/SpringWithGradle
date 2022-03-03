@@ -1,20 +1,19 @@
 package mybatis.transaction;
 
-import cn.hutool.core.io.IoUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import context.CompontScan;
 import lombok.extern.slf4j.Slf4j;
+import mybatis.AbstractCustomRoutingDataSource;
+import mybatis.AopConfig;
 import mybatis.CustomRoutingDataSource;
 import mybatis.MybatisBean;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
-import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -27,8 +26,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -37,7 +34,7 @@ import java.util.Map;
 @Slf4j
 public class MybatisBeanForPG extends MybatisBean {
     /**
-     todo data need rest  by language driver.
+     todo data need reset  by language driver.
      and add second before method
      */
     @BeforeEach
@@ -73,18 +70,22 @@ public class MybatisBeanForPG extends MybatisBean {
     }
     public void tableCreateTest(MapperInterface mapperInterface, DataSource dataSource) throws SQLException, IOException {
         String script= "create.sql";
-        CustomRoutingDataSource customRoutingDataSource = (CustomRoutingDataSource) dataSource;
+        AbstractCustomRoutingDataSource customRoutingDataSource = (AbstractCustomRoutingDataSource) dataSource;
         customRoutingDataSource.loadBalancePolicy(1);
         runScript(dataSource,script);
     }
-    public void dataReset(MapperInterface mapperInterface, DataSource dataSource) throws SQLException, IOException {
+    public void dataReset(MapperInterface mapperInterface, DataSource dataSource,Integer index) throws SQLException, IOException {
+        AbstractCustomRoutingDataSource customRoutingDataSource = (AbstractCustomRoutingDataSource) dataSource;
+        customRoutingDataSource.loadBalancePolicy(index);
+        log.info("current datasource{}",dataSource.toString());
+        if(index==1){
+            mapperInterface.truncate();
 
-        mapperInterface.truncate();
-        String script= "insert.sql";
+            String script= "insert.sql";
 
-        CustomRoutingDataSource customRoutingDataSource = (CustomRoutingDataSource) dataSource;
-        customRoutingDataSource.loadBalancePolicy(1);
-        runScript(customRoutingDataSource,script);
+            runScript(dataSource,script);
+        }
+
 
 
     }
@@ -98,15 +99,29 @@ public class MybatisBeanForPG extends MybatisBean {
     public void makeDataSourceAndMapper(){
 
     }
+//    public Object[] transactionTestForNewWithAop(){
+//        return transactionTestForNew(AopConfig.class);
+//    }
+
     public Object[] transactionTestForNew(){
+            return transactionTestForNew(1);
+    }
+    public Object[] transactionTestForNew(Integer index){
         super.startContext();
         DataSourceTransactionManager bean = applicationContext.getBean(DataSourceTransactionManager.class);
         org.junit.Assert.assertNotNull(bean);
-        SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) applicationContext.getBean("sqlSessionFactory");
-        SqlSession sqlSession = sqlSessionFactory.openSession(true);
-        MapperInterface mapper = sqlSession.getMapper(MapperInterface.class);
+        Assertions.assertTrue(applicationContext.getBeanDefinition("customRoutingDataSourceWithThreadLocal").isPrimary());;
+        /**
+         warning: and SqlSessionFactory 's MapperInterface vs applicationContext.getBean(MapperInterface.class);
+         ref is difference,
+         */
+//        SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) applicationContext.getBean("sqlSessionFactory");
+//        SqlSession sqlSession = sqlSessionFactory.openSession(true);
+//        MapperInterface mapper = sqlSession.getMapper(MapperInterface.class);
+        MapperInterface mapper = applicationContext.getBean(MapperInterface.class);
+
         try {
-            dataReset(mapper,bean.getDataSource());
+            this.dataReset(mapper,bean.getDataSource(),index);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         } catch (IOException e) {
@@ -117,10 +132,21 @@ public class MybatisBeanForPG extends MybatisBean {
         return new Object[]{mapper,transactionTemplate,transactionTemplate2};
     }
     @Test
+    public void OuterSuccess(){
+        Object[] objects = transactionTestForNew();
+        MapperInterface mapper = (MapperInterface)objects[0];
+        TransactionTemplate transactionTemplate = (TransactionTemplate)objects[1]; // ab
+        transactionTemplate.setPropagationBehavior(0);
+
+        transactionTemplate.executeWithoutResult((TransactionStatus status)->{
+            Assert.assertTrue(mapper.findSomeThings());;
+        });
+    }
+    @Test
     public void OuterSuccessAndInnerFail(){
         Object[] objects = transactionTestForNew();
         MapperInterface mapper = (MapperInterface)objects[0];
-        TransactionTemplate transactionTemplate = (TransactionTemplate)objects[1];
+        TransactionTemplate transactionTemplate = (TransactionTemplate)objects[1]; // ab
         TransactionTemplate transactionTemplate2 = (TransactionTemplate)objects[2];
 
         transactionTemplate2.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);

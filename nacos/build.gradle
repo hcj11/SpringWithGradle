@@ -27,11 +27,16 @@ allprojects {
         mavenLocal()
     }
     dependencies {
+        // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
+        testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.2.9.RELEASE'
+
+        // https://mvnrepository.com/artifact/org.apache.dubbo/dubbo-spring-boot-starter
+//        implementation group: 'org.apache.dubbo', name: 'dubbo-spring-boot-starter', version: '2.7.10'
 
         // https://mvnrepository.com/artifact/org.mockito/mockito-core
         testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.23.4'
 
-        implementation('org.springframework.boot:spring-boot-starter-logging:2.3.8.RELEASE') {
+        implementation('org.springframework.boot:spring-boot-starter-logging:2.2.9.RELEASE') {
             exclude(group: 'log4j', module: 'log4j')
         }
         // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all
@@ -50,10 +55,11 @@ allprojects {
         annotationProcessor 'org.projectlombok:lombok:1.18.12'
         testCompileOnly 'org.projectlombok:lombok:1.18.12'
         compileOnly 'org.projectlombok:lombok:1.18.12'
-        implementation group: 'org.apache.dubbo', name: 'dubbo-spring-boot-starter', version: '2.7.5'
+           implementation group: 'org.apache.dubbo', name: 'dubbo-spring-boot-starter', version: '2.7.5'
+//        implementation group: 'org.apache.dubbo', name: 'dubbo-spring-boot-starter', version: '3.0.2.1'
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-        implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:' + "${property('alibaba.version')}"
+//        implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:' + "${property('alibaba.version')}"
     }
 
 }

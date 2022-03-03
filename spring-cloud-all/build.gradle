@@ -1,0 +1,84 @@
+buildscript {
+    repositories {
+        mavenLocal({ print(it) })
+        gradlePluginPortal()
+        mavenCentral()
+        maven { url 'https://repo.spring.io/plugins-snapshot' }
+    }
+    dependencies {
+        classpath 'io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE'
+        classpath group: 'org.apache.maven', name: 'maven-plugin-api', version: '3.0'
+        classpath('org.springframework.boot:spring-boot-maven-plugin:2.1.3.RELEASE')
+        classpath('org.springframework.boot:spring-boot-gradle-plugin:2.1.3.RELEASE')
+    }
+}
+
+plugins {
+    id 'java'
+}
+apply plugin: "org.springframework.boot"
+apply plugin: 'io.spring.dependency-management'
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12'
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:2.2.9.RELEASE'
+
+    }
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+ext{
+}
+
+repositories {
+    mavenCentral()
+}
+task hello {
+    doLast {
+        System.out.println('==parent:=' + parent?.name);
+        rootProject.allprojects.forEach({
+            System.out.println('==1=' + it.name)
+        });
+    }
+}
+
+dependencies {
+
+}
+allprojects {
+    apply plugin: 'java'
+    buildDir = 'out'
+
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        // use from pom to import parent version.
+        implementation enforcedPlatform('org.springframework.boot:spring-boot-dependencies:2.2.9.RELEASE')
+        implementation enforcedPlatform('org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12')
+//        project.version
+//        implementation group: 'org.springframework.cloud', name: 'spring-cloud-netflix-dependencies', version: '3.1.0', ext: 'pom'
+        testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+
+        testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.23.4'
+
+        implementation('org.springframework.boot:spring-boot-starter-logging') {
+            exclude(group: 'log4j', module: 'log4j')
+        }
+        // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all
+        testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+
+        // <---> test + mock
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+        annotationProcessor 'org.projectlombok:lombok:1.18.12'
+        testCompileOnly 'org.projectlombok:lombok:1.18.12'
+        compileOnly 'org.projectlombok:lombok:1.18.12'
+    }
+
+}
+
+test {
+    useJUnit()
+    useJUnitPlatform()
+}

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.*;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
@@ -58,7 +58,13 @@ class CustomConditional implements ConfigurationCondition {
         return true;
     }
 }
+/**
+ *  @ConditionalOnProperty(name = "name",havingValue = "hcjhcj")
+   in case of @AutoConfigureBefore have influence to other bean autowired.
 
+ */
+//
+@ConditionalOnProperty(name = "name",havingValue = "hcjhcj")
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureOrder(value = 2)
 @AutoConfigureBefore(SubA.class)
@@ -69,7 +75,7 @@ class SubB {
         return new B();
     }
 }
-@ImportAutoConfiguration({SubA.class, SubB.class})
+@ImportAutoConfiguration({SubB.class})
 public class AutoConfiguration {
     private String name;
 

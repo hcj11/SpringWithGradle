@@ -16,6 +16,13 @@ public class MybatisBeanDataSourceTest extends MybatisBean {
         Object bean = applicationContext.getBean(cls);
         return bean;
     }
+    /**
+     * and add aop to deal with the
+     */
+    @Test
+    public void try1(){
+
+    }
     @Test
     public void determinedDataSourceWithSpecialTest(){
         CustomRoutingDataSource customRoutingDataSource = (CustomRoutingDataSource) makeUpContext(CustomRoutingDataSource.class);

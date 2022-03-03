@@ -1,0 +1,35 @@
+
+
+plugins {
+    id 'java-library'
+    id 'idea'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // only add the client
+    implementation( 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+    // and add the web
+    implementation( 'org.springframework.boot:spring-boot-starter-web')
+}
+
+task hello {
+    doLast {
+        System.out.println('==parent:=' + parent?.name);
+        rootProject.allprojects.forEach( {
+            System.out.println('==1=' + it.name)
+        });
+    }
+}
+
+jar{
+}
+test {
+    useJUnitPlatform()
+}

@@ -13,14 +13,10 @@ repositories {
 
 dependencies {
     implementation(project(':DubboApi'))
-    implementation 'org.springframework.cloud:spring-cloud-context'
-    implementation 'org.springframework.cloud:spring-cloud-commons'
+
 }
 
 test {
-    systemProperty 'o' ,'v'
-    useJUnitPlatform({
-        maxParallelForks(2)
-        forkEvery(2)
-    })
+    useJUnit()
+    useJUnitPlatform()
 }

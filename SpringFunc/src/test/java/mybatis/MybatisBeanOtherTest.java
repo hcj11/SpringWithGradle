@@ -13,6 +13,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.Test;
+import org.slf4j.helpers.Util;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import sample.mybatis.mapper.MapperInterface;
@@ -119,14 +120,24 @@ public class MybatisBeanOtherTest extends MybatisBean {
         int i4 = (int) (132 / 100) + 1; // 2
         log.info("{},{},{},{}", i, i1, i2, i4);
     }
+    @Test
+    public void providerTest() throws NoSuchMethodException {
 
+        applicationContext.register(MapperConfiguration.class);
+        startContext();
+        SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) applicationContext.getBean("sqlSessionFactory");
+        MapperInterface mapperInterface = (MapperInterface)applicationContext.getBean("mapperInterface");
+
+
+    }
     @Test
     public void scanMapper() throws NoSuchMethodException {
 
         applicationContext.register(MapperConfiguration.class);
         startContext();
+        CompontScan.print(applicationContext);
         SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) applicationContext.getBean("sqlSessionFactory");
-        Object bean = applicationContext.getBean("mybatis.MapperConfiguration");
+        Object bean = applicationContext.getBean("mybatisBean.MapperConfiguration");
         Assert.notNull(bean);
         Object mapperInterface = applicationContext.getBean("mapperInterface");
         Assert.notNull(mapperInterface);

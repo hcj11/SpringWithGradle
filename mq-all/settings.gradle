@@ -1,0 +1,4 @@
+rootProject.name = 'mq-all'
+
+include(':activemq')
+findProject(':activemq')?.name = 'activemq'

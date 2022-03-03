@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * ·Ö¶Îsql
+ * sql
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

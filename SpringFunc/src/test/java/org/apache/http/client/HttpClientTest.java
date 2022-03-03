@@ -92,7 +92,7 @@ public class HttpClientTest {
             'e', 'f'};
 
     public void hexTest3() {
-        String json = "低位字的两个高位";
+        String json = "111111";
         byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
         int l = bytes.length;
         char[] out = new char[l << 1];
@@ -111,7 +111,7 @@ public class HttpClientTest {
     public void hexTest() {
       // 32 位 转 16 位
 
-        String json = "低位字的两个高位";
+        String json = "锟斤拷位锟街碉拷锟斤拷锟斤拷锟斤拷位";
         // 474e9de94327d238497071a2df24fea5
         // 474e9de94327d238497071a2df24fea5
         String s = null;

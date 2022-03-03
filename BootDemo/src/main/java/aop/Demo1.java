@@ -35,14 +35,22 @@ public class Demo1 {
             });
 
         } catch (Exception e) {
-            log.error("=调用者进行异常处理========={}", e.getMessage());
+            log.error("=========={}", e.getMessage());
         }
     }
+    public static void shopString(AnnotationConfigApplicationContext context) {
+        Shopping bean = (Shopping) context.getBean(Shopping.class);
+        bean.shop("weihai");
 
+    }
+/**
+ 澶歛op鎷︽埅鐨勫鐞嗘柟寮忥紝
+ */
     public static void main(String[] args) {
 
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(CustomAopConfig.class);
-        demo4(context);
+
+        shopString(context);
 
 
     }

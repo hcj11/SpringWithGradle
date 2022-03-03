@@ -6,6 +6,10 @@ include 'Swagger'
 include 'CustomStarter'
 
 includeBuild('./nacos')
+includeBuild('./mq-all')
+includeBuild('./spring-cloud-all')
+includeBuild('./payment-system-all')
+
 
 include 'JavaConcurrency'
 include 'Algorithm'

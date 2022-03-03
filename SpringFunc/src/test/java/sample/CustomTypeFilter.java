@@ -16,7 +16,7 @@ import java.io.IOException;
 public class CustomTypeFilter implements TypeFilter {
 
     /**
-     * 代理去构建
+     *
      */
     @Primary
     @Qualifier

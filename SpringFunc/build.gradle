@@ -15,6 +15,7 @@ springBoot {
 }
 
 dependencies {
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 // https://mvnrepository.com/artifact/tk.mybatis/mapper
     implementation group: 'tk.mybatis', name: 'mapper', version: '3.5.2'
 
@@ -27,15 +28,15 @@ dependencies {
     // alibaba
     implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:' + "${property('alibaba.version')}"
 // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.0.RELEASE'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign'
 // https://mvnrepository.com/artifact/io.github.openfeign/feign-jackson
     implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '11.1'
 
 
     // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-eureka-server
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-server', version: '2.2.0.RELEASE'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-server'
 
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client', version: '2.2.2.RELEASE'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client'
 
     /** shardingsphere - jdbc */
     implementation 'io.shardingsphere:sharding-jdbc-orchestration:3.0.0.M3'

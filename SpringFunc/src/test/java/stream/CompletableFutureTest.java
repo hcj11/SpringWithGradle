@@ -52,7 +52,7 @@ public class CompletableFutureTest {
                 s->{
                     Integer res = doAsync(s);
                     Thread.yield();
-                    // Ä¬ÈÏÊÇ
+                    //
                     log.info("currentThread:{},res:{}",Thread.currentThread().getName(),res);
                     Assert.isTrue(res !=null && res == s + 1);
 

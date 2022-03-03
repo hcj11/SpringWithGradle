@@ -1,0 +1,6 @@
+rootProject.name = 'spring-cloud-all'
+
+include(':eureka-server')
+findProject(':eureka-server')?.name = 'eureka-server'
+include(':eureka-client')
+findProject(':eureka-client')?.name = 'eureka-client'

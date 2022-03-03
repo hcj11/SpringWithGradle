@@ -1,6 +1,7 @@
 package mybatis;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
@@ -13,10 +14,13 @@ import com.mockrunner.mock.jdbc.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import mybatis.interceptor.AddOrgCodeForPageInteceptor;
+import mybatis.interceptor.DataSourceRouteInteceptor;
 import mybatis.transaction.MybatisBeanForPG;
+import mybatis.transaction.MybatisBeanForRouting;
 import org.apache.ibatis.mapping.ResultSetType;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.reflection.MetaObject;
+import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -29,13 +33,16 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.context.config.ConfigFileApplicationListener;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.context.annotation.*;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
 import sample.mybatis.mapper.MapperInterface;
-import tk.mybatis.mapper.common.BaseMapper;
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.spring.mapper.MapperScannerConfigurer;
 
@@ -73,18 +80,46 @@ class CustomMapperScannerConfigurer{
         return mapperScannerConfigurer;
     }
 }
+@Data
 @Configuration
 class RouteDataSourceConfigurationDemo {
     @Autowired
     Map<String, DataSource> map;
+    volatile static CustomRoutingDataSource customRoutingDataSource;
+    volatile static CustomRoutingDataSourceWithThreadLocal customRoutingDataSourceWithThreadLocal;
 
+    /**
+     * 锁定对象class 或者锁定对象，
+     */
     @Primary
+    @ConditionalOnProperty(name = "RouteDataSourceToTransformWithThreadLocal",havingValue = "threadLocal",matchIfMissing = true)
     @Bean
-    public CustomRoutingDataSource customRoutingDataSource(Map<String, DataSource> map) {
-        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-        objectObjectHashMap.putAll(map);
-
-        return new CustomRoutingDataSource(objectObjectHashMap);
+    public static CustomRoutingDataSourceWithThreadLocal customRoutingDataSourceWithThreadLocal(Map<String, DataSource> map) {
+        if(ObjectUtil.isEmpty(customRoutingDataSourceWithThreadLocal)){
+            synchronized (RouteDataSourceConfigurationDemo.class){
+                if(ObjectUtil.isEmpty(customRoutingDataSourceWithThreadLocal)){
+                    HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+                    objectObjectHashMap.putAll(map);
+                    customRoutingDataSourceWithThreadLocal = new CustomRoutingDataSourceWithThreadLocal(objectObjectHashMap);
+                }
+            }
+        }
+        return customRoutingDataSourceWithThreadLocal;
+    }
+    @Primary
+    @ConditionalOnProperty(name = "RouteDataSourceToTransformWithThreadLocal",havingValue = "atomic")
+    @Bean
+    public static CustomRoutingDataSource customRoutingDataSource(Map<String, DataSource> map) {
+        if(ObjectUtil.isEmpty(customRoutingDataSource)){
+            synchronized (RouteDataSourceConfigurationDemo.class){
+                if(ObjectUtil.isEmpty(customRoutingDataSource)){
+                    HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+                    objectObjectHashMap.putAll(map);
+                    customRoutingDataSource = new CustomRoutingDataSource(objectObjectHashMap);
+                }
+            }
+        }
+        return customRoutingDataSource;
     }
 
 }
@@ -156,14 +191,16 @@ public class MybatisBean {
      * the unit test type of  sqlsessionFactory
      */
     enum TestTypes {
-        PG, PLUS, EMBED;
+        PG, PLUS, EMBED,ROUTE;
 
         public void doAction(AnnotationConfigApplicationContext applicationContext) throws SQLException {
             if (this == PG) {
                 setupSqlSessionFactoryForPG(applicationContext);
             } else if (this == EMBED) {
                 setupSqlSessionFactory(applicationContext);
-            } else {
+            } else if(this==ROUTE){
+                setupSqlSessionFactoryForRoute(applicationContext);
+            } else{
             }
         }
     }
@@ -181,12 +218,18 @@ public class MybatisBean {
         testTypes = new AtomicReference<>();
         applicationContext.register(RouteDataSourceConfigurationDemo.class);
         testInfo.getTestClass().ifPresent(cls -> {
-            if (MybatisBeanForPG.class.isAssignableFrom(cls)) {
+            /**
+             *  subClass -> class
+             */
+            if(MybatisBeanForRouting.class.isAssignableFrom(cls)){
+                testTypes.set(ROUTE);
+                applicationContext.register(TransactionAutoConfigurationDemo.class);
+            } else if (MybatisBeanForPG.class.isAssignableFrom(cls)) {
                 testTypes.set(PG);
                 applicationContext.register(TransactionAutoConfigurationDemo.class);
             } else if (MybatisBeanPlusTest.class.isAssignableFrom(cls)) {
                 testTypes.set(PLUS);
-            } else {
+            }  else {
                 testTypes.set(EMBED);
             }
         });
@@ -223,15 +266,24 @@ public class MybatisBean {
                 }
             };
         }
+        public static Interceptor DataSourceRouteInteceptor(mybatis.CustomRoutingDataSource customRoutingDataSource) {
+            DataSourceRouteInteceptor dataSourceRouteInteceptor = new DataSourceRouteInteceptor(customRoutingDataSource);
+            dataSourceRouteInteceptor.setProperties(new Properties());
+            return dataSourceRouteInteceptor;
+        }
+//        @Bean
+//        public static Interceptor DataSourceRouteInteceptor(DataSource customRoutingDataSource) {
+//            DataSourceRouteInteceptor dataSourceRouteInteceptor = new DataSourceRouteInteceptor(customRoutingDataSource);
+//             dataSourceRouteInteceptor.setProperties(new Properties());
+//            return dataSourceRouteInteceptor;
+//        }
 
-        @Bean
         public static Interceptor AddOrgCodeForPageInteceptor() {
             AddOrgCodeForPageInteceptor addOrgCodeInteceptor = new AddOrgCodeForPageInteceptor();
             addOrgCodeInteceptor.setProperties(new Properties());
             return addOrgCodeInteceptor;
         }
 
-        @Bean
         public static Interceptor PageInterceptor() {
             PageInterceptor pageInterceptor = new PageInterceptor();
 
@@ -597,7 +649,43 @@ public class MybatisBean {
 
     }
 
-    private static void setupSqlSessionFactoryForPG(AnnotationConfigApplicationContext applicationContext) throws SQLException {
+    private static void setupSqlSessionFactoryForRoute(AnnotationConfigApplicationContext applicationContext) throws SQLException {
+//        BeanDefinition routeDataSourceConfigurationDemo = applicationContext.getBeanDefinition("routeDataSourceConfigurationDemo");
+//        MutablePropertyValues propertyValues = routeDataSourceConfigurationDemo.getPropertyValues();
+//        CustomRoutingDataSource customRoutingDataSource = (CustomRoutingDataSource)propertyValues.get("customRoutingDataSource");
+        /**
+         * fixme: 如何提前autowired ,目前初次只解析到了， routeDataSourceConfigurationDemo 子属性未成功注入，
+         */
+
+
+        Map<String, DataSource> pg = Maps.newHashMap("pgDruidDataSource", MapperConfiguration.pgDruidDataSource());
+        pg.put("druidDataSource",MapperConfiguration.druidDataSource());
+        DataSource dataSource = MapperConfiguration.dataSource();
+        pg.put("dataSource",dataSource );
+        StandardEnvironment environment = (StandardEnvironment) applicationContext.getEnvironment();
+        MutablePropertySources propertySources = environment.getPropertySources();
+        GenericBeanDefinition definition = new GenericBeanDefinition();
+        definition.setBeanClass(SqlSessionFactoryBean.class);
+        // and new ConfigFileApplicationContextInitializer load propertiesSource,
+        // CustomRoutingDataSource
+        String threadLocal = environment.getProperty("RouteDataSourceToTransformWithThreadLocal");
+        if(threadLocal==null || threadLocal.equals("threadLocal")){
+            CustomRoutingDataSourceWithThreadLocal customRoutingDataSourceWithThreadLocal = RouteDataSourceConfigurationDemo.customRoutingDataSourceWithThreadLocal(pg);
+            customRoutingDataSourceWithThreadLocal.afterPropertiesSet();;
+            definition.getPropertyValues().add("dataSource",customRoutingDataSourceWithThreadLocal);
+        }else{
+            CustomRoutingDataSource customRoutingDataSource = RouteDataSourceConfigurationDemo.customRoutingDataSource(pg);
+            customRoutingDataSource.afterPropertiesSet();;
+            definition.getPropertyValues().add("dataSource",customRoutingDataSource);
+        }
+
+
+        org.springframework.core.io.ClassPathResource classPathResource = new org.springframework.core.io.ClassPathResource("sqlmap/MapperInterface.xml");
+        definition.getPropertyValues().add("mapperLocations", classPathResource);
+        applicationContext.registerBeanDefinition("sqlSessionFactory", definition);
+    }
+
+        private static void setupSqlSessionFactoryForPG(AnnotationConfigApplicationContext applicationContext) throws SQLException {
 
         GenericBeanDefinition definition = new GenericBeanDefinition();
         definition.setBeanClass(SqlSessionFactoryBean.class);

@@ -10,8 +10,8 @@ repositories {
 }
 dependencies {
     // libs
-    implementation fileTree(dir: '../libs', include: ['*.jar'])
-    testImplementation fileTree(dir: '../libs', include: ['*.jar'])
+//    implementation fileTree(dir: '../libs', include: ['*.jar'])
+//    testImplementation fileTree(dir: '../libs', include: ['*.jar'])
     implementation project(':APIProject')
 
 }

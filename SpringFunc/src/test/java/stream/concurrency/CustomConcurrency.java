@@ -6,11 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +25,7 @@ import static org.mockito.Mockito.when;
 public class CustomConcurrency {
     class Custom extends AbstractFuture<String> {
         @Override
-        protected boolean set(@NullableDecl String value) {
+        protected boolean set(@Nullable String value) {
             return super.set(value);
         }
     }
@@ -105,7 +104,7 @@ public class CustomConcurrency {
 
         AsyncFunction<String, String> asyncFunction = new AsyncFunction<String, String>() {
             @Override
-            public ListenableFuture<String> apply(@NullableDecl String input) throws Exception {
+            public ListenableFuture<String> apply(@Nullable String input) throws Exception {
                 Thread.sleep(4000);
                 return dataQueryService(input);
             }

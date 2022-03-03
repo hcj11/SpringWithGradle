@@ -37,7 +37,7 @@ public class TypeHandlerTest {
         Class<EnumOrdinalTypeHandler> enumOrdinalTypeHandlerClass = EnumOrdinalTypeHandler.class;
 
         /**
-         * database -> java memory  转换方式。 "UP" => UpTypes.name();
+         * database -> java memory  转UP" => UpTypes.name();
          */
         UpTypes up = Enum.valueOf(UpTypes.class, "UP");
 

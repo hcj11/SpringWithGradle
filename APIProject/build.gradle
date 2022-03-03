@@ -10,7 +10,8 @@ repositories {
 }
 
 dependencies {
-
+    implementation fileTree(dir: '../libs', include: ['*.jar'])
+    testImplementation fileTree(dir: '../libs', include: ['*.jar'])
 }
 
 test {

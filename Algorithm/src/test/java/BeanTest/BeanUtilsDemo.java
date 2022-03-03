@@ -28,7 +28,7 @@ public class BeanUtilsDemo {
         a.setName("hello");
         a.setOrderId("222");
         A a2 = new A();
-        //  class 的 public 找到修饰为准。
+        //
         BeanUtils.copyProperties(a2, a);
         System.out.println(a2.getOrderId());
 

@@ -30,7 +30,7 @@ public class CutomProxyBean  {
     @Bean
     public ProxyFactoryBean proxyFactoryBean(){
         /**
-         * 都是代理，拦截
+
          */
         ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
         proxyFactoryBean.setTarget(asyncResult);

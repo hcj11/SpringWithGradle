@@ -136,7 +136,7 @@ public class ConfigurationProperties {
         Assert.isTrue(bean.getMap().get(1).get("name").equalsIgnoreCase("hcjhcj"));
     }
     /**
-     *   ConfigurationProperties 支持method。重新绑定。
+     *   ConfigurationProperties
      */
     @Test
     public void loadShouldSupportRebinderConfigurationProperties() {

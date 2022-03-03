@@ -40,7 +40,7 @@ public class ScheduleBean {
 
     public void doGetName(){
         /**
-         * ²ßÂÔÄ£Ê½¡£
+         *
          */
         CustomFunctionalInterface functionalInterface = ()->{return "hello world hcj!!!";};
         CustomFunctionalInterface functionalInterface2 = ()->{return "hello world !!!";};
@@ -124,7 +124,7 @@ public class ScheduleBean {
     @Test
     public void FixedParse() throws SchedulerException {
         /**
-         * É¨Ãètask; get cronable
+         * É¨ï¿½ï¿½task; get cronable
          */
         JobDetail object1 = new JobDetailFactoryBean().getObject();
 
@@ -137,9 +137,9 @@ public class ScheduleBean {
         ScheduledExecutorFactoryBean scheduledExecutorFactoryBean = new ScheduledExecutorFactoryBean();
         ScheduledExecutorService object = scheduledExecutorFactoryBean.getObject();
         /**
-         *  autoconfigure =>  ¶ÔconditionalÏà¹Ø×¢½âµÄ´¦Àí
-         *   multi - context ->  Á¬½Ó·½Ê½¡£
-         *   Ê¹ÓÃ´úÀí£¬
+         *  autoconfigure =>  ï¿½ï¿½conditionalï¿½ï¿½ï¿½×¢ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
+         *   multi - context ->  ï¿½ï¿½ï¿½Ó·ï¿½Ê½ï¿½ï¿½
+         *   Ê¹ï¿½Ã´ï¿½ï¿½ï¿½
          */
 //
 

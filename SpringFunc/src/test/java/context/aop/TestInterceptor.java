@@ -6,10 +6,10 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.cglib.core.ReflectUtils;
 
 import java.lang.reflect.Method;
-
 @Slf4j
 public class TestInterceptor implements MethodInterceptor {
 

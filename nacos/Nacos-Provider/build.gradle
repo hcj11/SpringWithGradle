@@ -9,12 +9,16 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
+java {
+    def d =  UUID.randomUUID().toString()
+    testResultsDirName = "$buildDir/test-result-"+d
+}
 
 
 dependencies {
     implementation(project(':DubboApi'))
-    implementation 'org.springframework.cloud:spring-cloud-context'
-    implementation 'org.springframework.cloud:spring-cloud-commons'
+//    implementation 'org.springframework.cloud:spring-cloud-context:2.2.2.RELEASE'
+//    implementation 'org.springframework.cloud:spring-cloud-commons:2.2.2.RELEASE'
 }
 
 test {

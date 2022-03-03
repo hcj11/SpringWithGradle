@@ -1,40 +1,29 @@
 package org.apache.http.client.nio;
 
 import cn.hutool.core.lang.Assert;
-import com.google.j2objc.annotations.LoopTranslation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.CoyoteInputStream;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.entity.ContentType;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
-import org.apache.http.impl.io.SessionOutputBufferImpl;
 import org.apache.http.impl.nio.codecs.IdentityDecoder;
 import org.apache.http.impl.nio.codecs.IdentityEncoder;
 import org.apache.http.impl.nio.codecs.LengthDelimitedDecoder;
 import org.apache.http.impl.nio.reactor.SessionInputBufferImpl;
-import org.apache.http.io.SessionOutputBuffer;
-import org.apache.http.nio.client.methods.ZeroCopyConsumer;
-import org.apache.http.nio.reactor.SessionInputBuffer;
 import org.apache.http.nio.util.ByteBufferAllocator;
-import org.apache.http.nio.util.HeapByteBufferAllocator;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.runner.RunWith;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,10 +32,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static org.apache.http.client.nio.HttpClientNioSourceTest.CustomHeapByteBufferAllocator.customHeapByteBufferAllocator;
-import static org.assertj.core.api.BDDAssumptions.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 public class HttpClientNioSourceTest {

@@ -50,7 +50,6 @@ class C {
 @Slf4j
 public class BeanUtils {
     /**
-     * 验证 非相同class 的同属性的复制操作
      */
     @Test
     public void try1() {
@@ -69,13 +68,11 @@ public class BeanUtils {
         Assert.isTrue(hcjWithB.getName() == hcjWithC.getName());
         Assert.isTrue(build == hcjWithB.getTmp() && hcjWithB.getTmp() == hcjWithC.getTmp());
         /**
-         * 子对象的  TmpAge 属性被改动.
          */
         build.setTmpAge(3);
         Assert.isTrue(hcjWithB.getTmp().getTmpAge().equals(hcjWithB.getTmp().getTmpAge()));
         Assert.isTrue(hcjWithB.getTmp().getTmpAge() == hcjWithB.getTmp().getTmpAge());
         /**
-         * hcjWithC 的tmp 不会变为null，hcjWithB 只是改变了tmp的内存地址，而hcjWithC并没有改变，
          */
         hcjWithB.setTmp(null);
         Assert.isNull(hcjWithB.getTmp());

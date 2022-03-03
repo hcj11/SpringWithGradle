@@ -102,7 +102,7 @@ public class Jackson2ObjectMapperBuilderTest {
         ArrayList hellos = (ArrayList) read.get("hellos");
         log.info("{},{}",integer,hellos);
         /**
-         * 多次读取导致失败，
+         *
          */
         MyInterface read1 = (MyInterface)converter.read(testbean.getType(),null, mockHttpInputMessage);
         log.info("{}", read1);

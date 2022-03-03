@@ -44,8 +44,10 @@ tasks.withType(JavaCompile) {
 }
 dependencyManagement {
     imports {
-        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:2.2.9.RELEASE'
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12'
     }
+
 }
 
 task hello {
@@ -68,8 +70,8 @@ subprojects {
 
     dependencies {
 
-        implementation enforcedPlatform('org.springframework.boot:spring-boot-dependencies:2.3.8.RELEASE')
-        implementation enforcedPlatform('org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR4')
+        implementation enforcedPlatform('org.springframework.boot:spring-boot-dependencies:2.2.9.RELEASE')
+        implementation enforcedPlatform('org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12')
 // <---> test + mock
         testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
         annotationProcessor 'org.projectlombok:lombok:1.18.12'
@@ -78,8 +80,6 @@ subprojects {
         testImplementation 'org.junit.jupiter:junit-jupiter-api'
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
         testImplementation 'junit:junit:4.12'
-        testImplementation 'org.springframework:spring-test:5.2.12.RELEASE'
-        implementation 'org.springframework.boot:spring-boot-test:2.2.2.RELEASE'
         testImplementation 'org.mockito:mockito-all:1.10.19'
 // aop
         implementation 'org.ow2.asm:asm:7.2'
@@ -96,14 +96,14 @@ subprojects {
         implementation 'org.apache.commons:commons-lang3:3.10'
         implementation 'commons-beanutils:commons-beanutils:1.8.0'
 // sping
-        implementation 'org.springframework:spring-jdbc:5.2.12.RELEASE'
-        implementation 'org.springframework:spring-web:5.2.12.RELEASE'
-        implementation 'org.springframework:spring-webmvc:5.2.12.RELEASE'
-        implementation 'org.springframework:spring-beans:5.2.12.RELEASE'
-        implementation 'org.springframework:spring-core:5.2.12.RELEASE'
-        implementation 'org.springframework:spring-context:5.2.12.RELEASE'
-        implementation 'org.springframework:spring-context-support:5.2.12.RELEASE'
-        implementation 'org.springframework:spring-aop:5.2.12.RELEASE'
+        implementation 'org.springframework:spring-jdbc'
+        implementation 'org.springframework:spring-web'
+        implementation 'org.springframework:spring-webmvc'
+        implementation 'org.springframework:spring-beans'
+        implementation 'org.springframework:spring-core'
+        implementation 'org.springframework:spring-context'
+        implementation 'org.springframework:spring-context-support'
+        implementation 'org.springframework:spring-aop'
 // tomcat
         implementation 'org.apache.tomcat:tomcat-catalina-ha:9.0.41'
         implementation 'org.apache.tomcat:tomcat-catalina:9.0.41'
@@ -118,7 +118,7 @@ subprojects {
         }
         implementation("org.quartz-scheduler:quartz-jobs:${property('quartz.version')}")
 //spring-boot
-        implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.2.6.RELEASE'
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 // cache
         implementation 'javax.cache:cache-api:1.0.0'
         implementation 'cn.hutool:hutool-all:5.4.3'

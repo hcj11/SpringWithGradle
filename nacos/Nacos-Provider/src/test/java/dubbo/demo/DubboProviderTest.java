@@ -32,8 +32,8 @@ public class DubboProviderTest {
 
         log.info("current thread class loader{}", Thread.currentThread().getContextClassLoader());
 
-        InputStream resourceAsStream = DubboProviderTest.class.getResourceAsStream("/log4j2.xml");
-        Assert.notNull(resourceAsStream, "not found this ");
+//        InputStream resourceAsStream = DubboProviderTest.class.getResourceAsStream("/log4j2.xml");
+//        Assert.notNull(resourceAsStream, "not found this ");
     }
 
     @BeforeEach
@@ -43,7 +43,7 @@ public class DubboProviderTest {
 
         RetryNTimes retryNTimes = new RetryNTimes(2, 1000);
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
-                .retryPolicy(retryNTimes).connectString("127.0.0.1:58929");
+                .retryPolicy(retryNTimes).connectString("127.0.0.1:51464");
         CuratorFrameworkImpl curatorFramework = new CuratorFrameworkImpl(builder);
         curatorFramework.start();
 
@@ -78,7 +78,7 @@ public class DubboProviderTest {
         //export the url   method..
 
         service.setApplication(new ApplicationConfig("first-dubbo-provider"));
-        service.setRegistry(new RegistryConfig("zookeeper://" + zookeeperHost + ":58929"));
+        service.setRegistry(new RegistryConfig("zookeeper://" + zookeeperHost + ":51239"));
 
         service.setInterface(UserInterface.class);
         service.setRef(new ProviderBean.UserInterfaceImpl());

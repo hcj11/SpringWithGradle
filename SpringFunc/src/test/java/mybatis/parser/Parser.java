@@ -2,6 +2,7 @@ package mybatis.parser;
 
 import cn.hutool.core.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
+import mybatis.SqlProvider;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.mapping.BoundSql;
@@ -13,10 +14,12 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,7 +53,20 @@ public class Parser {
     private MixedSqlNode mixedContents(SqlNode... contents) {
         return new MixedSqlNode(Arrays.asList(contents));
     }
+    class NestClass{
+        public void getSql(){}
+    }
 
+    @Test
+    public void de() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class cls = NestClass.class;
+        NestClass nestClass = NestClass.class.getDeclaredConstructor().newInstance();
+        Assertions.assertNotNull(nestClass);
+
+
+
+
+    }
     @Test
     public void concat() {
         ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();

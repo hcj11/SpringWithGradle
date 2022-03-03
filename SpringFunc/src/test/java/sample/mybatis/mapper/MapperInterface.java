@@ -4,9 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.pagehelper.Page;
 import mybatis.SqlProvider;
 import org.apache.ibatis.annotations.*;
-import sample.mybatis.annotation.ROLE1;
-import sample.mybatis.annotation.ROLE2;
-import sample.mybatis.annotation.SqlCheck;
+import org.assertj.core.util.Maps;
+import sample.mybatis.annotation.*;
 import sample.mybatis.domain.User;
 import sample.mybatis.dto.UserDto;
 
@@ -22,6 +21,41 @@ public interface MapperInterface extends BaseMapper<User> {
     public void nestUpdate(@Param(value = "count") int count);
 
     public void checkNull(Map params);
+
+     interface NestClass {
+        @SelectProvider(value = NestBuilder.class, method = "getSql")
+        public String getSql();
+
+        @SelectProvider(value = StaticNestBuilder.class, method = "getSqlWithStaticProvidr")
+        public String getSqlWithStaticProvidr();
+    }
+
+    static class StaticNestBuilder {
+        public static String getSqlWithStaticProvidr() {
+            return "hello hcjgetSqlWithStaticProvidr";
+        }
+    }
+
+    class NestBuilder {
+        public MapperInterface sqlProviderTest;
+
+        public NestBuilder() {
+        }
+
+        public NestBuilder(MapperInterface sqlProviderTestNew) {
+            this.sqlProviderTest = sqlProviderTestNew;
+        }
+
+        public String getSql() {
+            Maps.newHashMap("","").put("","");;
+            return "hello hcj";
+        }
+
+
+    }
+
+    @SelectProvider(method ="getSql" , type = SqlProvider.class)
+    public void find2(@Param("val")String val);
 
     @SelectProvider(method ="getSql" , type = SqlProvider.class)
     public void find(@Param("val")String val);
@@ -151,8 +185,13 @@ public interface MapperInterface extends BaseMapper<User> {
     @Delete("TRUNCATE users;")
     void truncate();
 
+    @EnablePg
     @Select(value = "select count(1)>0 from users where id=1 and user_group_name='党员 1 ' ;")
-    boolean findSomeThings();
+    public boolean findSomeThings();
+
+    @EnableMysql
+    @Select(value = "select count(1)>0 from users where id=1;")
+    public boolean findSomeThingsForMysql();
 
     @Select(value = "select count(1)>0 from users where id=3 and name='hcj3'\n" +
             "union all\n" +

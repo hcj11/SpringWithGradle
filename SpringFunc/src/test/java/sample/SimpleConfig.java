@@ -1,6 +1,6 @@
 package sample;
 
-import context.scan.CompontScan;
+import context.CompontScan;
 import lombok.Data;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectFactory;
