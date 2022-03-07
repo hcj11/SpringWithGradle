@@ -11,20 +11,12 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
-// https://mvnrepository.com/artifact/org.apache.activemq.tooling/activemq-perf-maven-plugin
-//    testImplementation("org.apache.activemq:activemq-broker:${property('activemq.version')}")
-//    testImplementation("org.apache.activemq:activemq-kahadb-store:${property('activemq.version')}")
-//    testImplementation("org.apache.activemq:activemq-stomp:${property('activemq.version')}")
-    implementation "org.springframework:spring-jms:${property('spring.version')}"
-    implementation "org.springframework:spring-beans:${property('spring.version')}"
-    implementation "org.springframework:spring-core:${property('spring.version')}"
-    implementation "org.springframework:spring-context:${property('spring.version')}"
-    // spring.boot.version
-    implementation "org.springframework.boot:spring-boot-starter-activemq:${property('spring.boot.version')}"
-
+    implementation('ylink.msf2:msf-core:0.0.1-SNAPSHOT')
+    implementation('ylink.upp2:upp-common:0.0.1-SNAPSHOT')
 
 }
 
@@ -38,10 +30,7 @@ task hello {
 }
 
 jar{
-    def d = UUID.randomUUID().toString();
-    archiveBaseName.set('dubboApi-'+d)
 }
 test {
     useJUnitPlatform()
-    useJUnit()
 }

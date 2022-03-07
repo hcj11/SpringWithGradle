@@ -49,8 +49,6 @@ public class ThreadPoolTest {
     @Test
     public void test2() {
         // loop future.get(), have problem , timout
-        // ²»´æÔÚÒÀÀµ¹ØÏµ£¬¿ÉÒÔ¶à´ÎÒì²½£¬Ö´ÐÐ£¬²»±Ø¶¼¿¨ÔÚÄ³Ò»²½ £¬ Ìá¹©completeFuture ¼´¿É¡£
-        // ²ÉÓÃjdk1.8µÄ·½Ê½¡£
         CompletableFuture.allOf();
 //        CompletableFuture.supplyAsync();
         CompletableFuture.completedFuture("");
@@ -75,7 +73,7 @@ public class ThreadPoolTest {
         /**
          * core->max->queue
          *    w.lock(); {}  w.unlock();
-         *    ¶àÏß³Ì²ÉÓÃ Í¬²½»úÖÆ½øÐÐ£¬workµÄÍ¬²½²Ù×÷¡£         *
+         *    ï¿½ï¿½ï¿½ß³Ì²ï¿½ï¿½ï¿½ Í¬ï¿½ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½Ð£ï¿½workï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½         *
          */
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1,
                 0L, TimeUnit.MILLISECONDS,
@@ -139,12 +137,12 @@ public class ThreadPoolTest {
     public void test1() throws InterruptedException {
         /**
          *
-         *  ²ÉÓÃcas ,×ÔÐýµÄ·½Ê½£¬½øÐÐµÈ´ý¡£´¦Àí¡£
-         *  »áµ¼ÖÂpool¹ÊÕÏ£¬ ²»»áµ¼ÖÂjvm¹ÊÕÏ£¬  onStart();
-         *  poolÔËÐÐ²»»áµ¼ÖÂpool¹ÊÕÏ£¬
-         *  parallel() is true:  Í¬Ñù¿ÉÒÔ²ÉÓÃspliterator ¿ò¼Ü£¬ÊµÏÖ²¢ÐÐµÄÖ´ÐÐÈÎÎñ
-         *  parallel() is false: Í¬Ñù¿ÉÒÔ²ÉÓÃspliterator ¿ò¼Ü£¬ÊµÏÖË³ÐòµÄÖ´ÐÐÈÎÎñ
-         *  .parallel().limit(50) ÎÞ·¨²ÉÓÃ²¢ÐÐÈÎÎñ£¬
+         *  ï¿½ï¿½ï¿½ï¿½cas ,ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÈ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+         *  ï¿½áµ¼ï¿½ï¿½poolï¿½ï¿½ï¿½Ï£ï¿½ ï¿½ï¿½ï¿½áµ¼ï¿½ï¿½jvmï¿½ï¿½ï¿½Ï£ï¿½  onStart();
+         *  poolï¿½ï¿½ï¿½Ð²ï¿½ï¿½áµ¼ï¿½ï¿½poolï¿½ï¿½ï¿½Ï£ï¿½
+         *  parallel() is true:  Í¬ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½spliterator ï¿½ï¿½Ü£ï¿½Êµï¿½Ö²ï¿½ï¿½Ðµï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+         *  parallel() is false: Í¬ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½spliterator ï¿½ï¿½Ü£ï¿½Êµï¿½ï¿½Ë³ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+         *  .parallel().limit(50) ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          *  */
         Thread.UncaughtExceptionHandler uncaughtExceptionHandler = (Thread t, Throwable e) -> {
             log.error("thread: {},error message: {}", t.getName(), e.getMessage());
@@ -156,7 +154,7 @@ public class ThreadPoolTest {
                         customForkJoinWorkerThreadFactory, uncaughtExceptionHandler, false);
 
 
-// Ô´Í· - ÖÐ¼Ì
+// Ô´Í· - ï¿½Ð¼ï¿½
         AtomicInteger s = new AtomicInteger();
         Stream.generate(() -> {
             return s.getAndIncrement();

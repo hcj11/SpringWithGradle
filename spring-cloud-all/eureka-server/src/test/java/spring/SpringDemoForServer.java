@@ -32,6 +32,7 @@ class CustomApplicationContextInitializerC implements ApplicationContextInitiali
                 "server.port=8761",
                 "spring.application.name=eureka1",
                 "eureka.client.service-url.defaultZone=http://localhost:8761/eureka",
+                "eureka.instance.non-secure-port=8081",
                 "eureka.instance.metadataMap.zone = zone1",
                 "eureka.client.preferSameZoneEureka = true");
     }

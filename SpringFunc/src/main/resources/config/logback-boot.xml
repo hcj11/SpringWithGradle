@@ -52,13 +52,14 @@
         </encoder>
 
     </appender>
+    <logger name="org.springframework.test.context.cache" level="debug" additional="false"></logger>
 
 <!--    <logger name="com.cesgroup.platform.shiro.filter.jwt.JwtAuthcFilter" level="OFF"/>-->
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-        <appender-ref ref="FILE-ERROR" />
+<!--        <appender-ref ref="FILE" />-->
+<!--        <appender-ref ref="FILE-ERROR" />-->
     </root>
 
 </configuration>

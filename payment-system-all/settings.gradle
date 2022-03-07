@@ -1,4 +1,4 @@
 rootProject.name = 'payment-system-all'
 
-include(':msf')
-findProject(':mfs')?.name = 'msf'
+//include(':msf')
+//findProject(':mfs')?.name = 'msf'

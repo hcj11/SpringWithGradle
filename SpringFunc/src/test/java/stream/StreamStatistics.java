@@ -82,7 +82,7 @@ public class StreamStatistics {
 //        Long.toHexString(negative)
 
 
-        int j = (1 + 4) >>> 1; // 向下取整
+        int j = (1 + 4) >>> 1; //
         //  0101
         //  0010 =2  0010
         // 1-9 10 -17
@@ -112,7 +112,7 @@ public class StreamStatistics {
         AtomicInteger atomicInteger = new AtomicInteger(0);
         Stream.generate(()->{return atomicInteger.getAndIncrement();}).forEach((s)->{
             if(s % 1000000==0){
-                log.info("1000000 整除 :{}",s);
+                log.info("1000000 锟斤拷锟斤拷 :{}",s);
             }
         });// 1609000000
     }

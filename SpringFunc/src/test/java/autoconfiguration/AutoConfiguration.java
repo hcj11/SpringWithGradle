@@ -3,12 +3,15 @@ package autoconfiguration;
 import context.CompontScan;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.*;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 
@@ -75,6 +78,7 @@ class SubB {
         return new B();
     }
 }
+@Slf4j
 @ImportAutoConfiguration({SubB.class})
 public class AutoConfiguration {
     private String name;
@@ -92,6 +96,30 @@ public class AutoConfiguration {
 
     }
     @Test
+    public void AutoConfigureBeforeAnnoInUse(){
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.register(AutoConfigurationTestForBeforeConfig.AfterAutoConfiguration.class);
+        context.refresh();;
+        CompontScan.print(context);
+        ConfigurableEnvironment environment = context.getEnvironment();
+        String name = environment.getProperty("name");
+        Assertions.assertNull(name);
+        Assertions.assertFalse(context.containsBean("autoconfiguration.AutoConfigurationTestForBeforeConfig$DummyConfiguration"));
+    }
+    @Test
+    public void AutoConfigureAfterAnnoInUse(){
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.register(AutoConfigurationTestForAfterConfig.AfterAutoConfiguration.class);
+        context.refresh();
+        CompontScan.print(context);
+        ConfigurableEnvironment environment = context.getEnvironment();
+        String name = environment.getProperty("name");
+        Assertions.assertNull(name);
+        Assertions.assertFalse(context.containsBean("autoconfiguration.AutoConfigurationTestForAfterConfig$DummyConfiguration"));
+
+
+    }
+    @Test
     public void AutoConfigureBeforeAnnoBetterThanOrder() {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.register(AutoConfiguration.class);
@@ -103,6 +131,37 @@ public class AutoConfiguration {
 
     @Test
     public void before() {
+
+    }
+}
+interface AutoConfigurationTestForBeforeConfig{
+    @Configuration
+    @ConditionalOnProperty(name = "name", havingValue = "hcjhcj")
+    class DummyAConfiguration{}
+
+    @AutoConfigureBefore(DummyAConfiguration.class)
+    class DummyConfiguration{
+    }
+    @Data
+    @Configuration
+    @Import(DummyConfiguration.class)
+    class AfterAutoConfiguration{
+
+    }
+}
+
+interface AutoConfigurationTestForAfterConfig{
+    @Configuration
+    @ConditionalOnProperty(name = "name", havingValue = "hcjhcj")
+    class DummyAConfiguration{}
+
+    @AutoConfigureAfter(DummyAConfiguration.class)
+    class DummyConfiguration{
+    }
+    @Data
+    @Configuration
+    @Import(DummyConfiguration.class)
+    class AfterAutoConfiguration{
 
     }
 }
