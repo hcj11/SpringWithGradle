@@ -1,5 +1,6 @@
 package com.paic.config;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -10,6 +11,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/html/**")
                 .addResourceLocations("classpath:/html/");
+        registry.addResourceHandler("/webapp")
+                .addResourceLocations("classpath:/webapp");
+
 
     }
 }

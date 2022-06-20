@@ -3,7 +3,6 @@ package JavaCode;
 
 import lombok.Data;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -46,7 +45,6 @@ public class StringTokenizerDemo {
     }
 
     /**
-     * 识别中间的    业务分隔符
      */
     public static void demo1() {
         StringTokenizer stringTokenizer = new StringTokenizer("hello,  |world|of|java", delimi, false);
@@ -69,7 +67,7 @@ public class StringTokenizerDemo {
             String s = stringTokenizer.nextToken();
             if (s.equals("|")) {
                 if (i++ >= maxFiled) {
-                    throw new IllegalArgumentException("超过最大值");
+                    throw new IllegalArgumentException("");
                 }
                 continue;
             }
@@ -152,7 +150,6 @@ public class StringTokenizerDemo {
         strings.add("d");
         strings.add("d");
         // [}
-         // 获取d之后的元素  dej
         System.out.println(strings.tailSet("d"));
         System.out.println(strings.headSet("a"));
         System.out.println("=================================================");

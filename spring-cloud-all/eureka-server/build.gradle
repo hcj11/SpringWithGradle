@@ -37,5 +37,9 @@ jar{
     testResultsDirName = "$buildDir/test-result-"+d
 }
 test {
-    useJUnitPlatform()
+    useJUnitPlatform({
+        maxParallelForks(4)
+        forkEvery(50)
+//        environment('spring.profiles.active','peer3')
+    })
 }

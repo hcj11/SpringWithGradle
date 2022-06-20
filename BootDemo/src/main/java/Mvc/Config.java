@@ -30,7 +30,7 @@ public class Config {
 
     public static void main(String[] args) throws IOException {
         /**
-         *   SpringApplication.run(com.paic.Config.class, args) 开启新线程。
+         *   SpringApplication.run(com.paic.Config.class, args)
          */
         ConfigurableApplicationContext run = SpringApplication.run(Config.class, args);
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
@@ -38,7 +38,6 @@ public class Config {
         log.info("{}",resourceAsStream!=null);
         log.info("SingletonCount : {}",run.getBeanFactory().getSingletonCount());;
         /**
-         * 加载propertySource
          */
         Environment bean = run.getBean(Environment.class);
         System.out.println(bean);

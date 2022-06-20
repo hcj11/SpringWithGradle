@@ -38,6 +38,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
@@ -139,6 +140,15 @@ public class EmbeddServerTest {
         @Scheduled
         @InitBinder
         public void customBinder() {
+
+        }
+
+        @Override
+        public void addResourceHandlers(ResourceHandlerRegistry registry) {
+            registry.addResourceHandler("/**").addResourceLocations("file:/G:/upload/");
+//            registry.addResourceHandler("/test/**").addResourceLocations("file:/G:/upload/");
+//            registry.addResourceHandler("/webapp")
+//                    .addResourceLocations("classpath:/webapp");
 
         }
 

@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 /**
- * ÐÂÔöfilter
+ * ï¿½ï¿½ï¿½ï¿½filter
  */
 class CustomWebApplicationInitializer implements WebApplicationInitializer{
     @Override
@@ -39,7 +39,7 @@ class CustomWebApplicationInitializer implements WebApplicationInitializer{
 }
 
 /**
- * ÄÚÇ¶server ÐÂÔöfilter
+ * ï¿½ï¿½Ç¶server ï¿½ï¿½ï¿½ï¿½filter
  */
 @WebFilter(urlPatterns = {"/web/*",})
 class CustomFilter implements Filter {
@@ -93,7 +93,6 @@ public class WebConfig extends SuperWebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * Æô¶¯Ê±Ä¬ÈÏµÄÀàÂ·¾¶ÏÂÃæµÄÂ·¾¶¶¨Òå¡¢
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -173,7 +172,7 @@ public class WebConfig extends SuperWebConfig implements WebMvcConfigurer {
         map.put(customObj2, Lists.<Integer>newArrayList(1, 0));
 
 //        /**
-//         * ¸ù¾Ýkey²»»áÔì³ÉÓ°Ïì£¬Ö»ÊÇÊý¾ÝµÄ×éºÏ¹¹Ôì²»Í¬¡£ ·Åµ½Á´±í»òÕßÊ÷ÖÐ¡£
+//         * ï¿½ï¿½ï¿½ï¿½keyï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ì£¬Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½Ï¹ï¿½ï¿½ì²»Í¬ï¿½ï¿½ ï¿½Åµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
 //         */
 //        List<Integer> integers = map.get(customObj1);
 //        log.info("{}", integers);

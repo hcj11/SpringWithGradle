@@ -13,5 +13,14 @@ dependencies {
 //    implementation fileTree(dir: '../libs', include: ['*.jar'])
 //    testImplementation fileTree(dir: '../libs', include: ['*.jar'])
     implementation project(':APIProject')
+    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '2.3.3'
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 
+}
+test{
+    useJUnit({
+    })
+    useJUnitPlatform({
+        environment('spring.profiles.active','peer3')
+    })
 }

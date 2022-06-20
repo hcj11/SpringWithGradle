@@ -5,10 +5,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 
 /**
- * 1. invokevirtual method   执行时确定类型  .
- * 2. 字段，没有动态分派，静态类型确定字段
- *
- * 面试题， 结合了  构造函数，虚函数的执行过程。
+ * 1. invokevirtual method
  */
 class Father {
     public int money = 1;

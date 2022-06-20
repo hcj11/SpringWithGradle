@@ -2,6 +2,30 @@
   client:
     serviceUrl:
       defaultZone: https://peer1:8761/eureka/,http://peer2:8762/eureka/,http://peer3:8763/eureka/
+    eureka-service-url-poll-interval-seconds: 30
+    registry-fetch-interval-seconds: 30
+    heartbeat-executor-exponential-back-off-bound: 10 #  if operation  fail , registry-fetch-interval-seconds  * heartbeat-executor-exponential-back-off-bound
+    initial-instance-info-replication-interval-seconds: 40 #
+    instance-info-replication-interval-seconds: 30
+    prefer-same-zone-eureka: true
+    eureka-server-d-n-s-name: eureka.local
+    eureka-server-u-r-l-context: eureka
+  server:
+    enableSelfPreservation: true
+    renewalPercentThreshold: 0.85 # 0.85 * (4+1)
+    expected-client-renewal-interval-seconds: 30
+    initial-capacity-of-response-cache: 1000
+    number-of-replication-retries: 5
+    wait-time-in-ms-when-sync-empty: 300
+#    renewal-threshold-update-interval-ms: 15 * 60 * 1000
+  instance:
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+    registry:
+      expected-number-of-clients-sending-renews: 1
+    prefer-ip-address: false
+#      expected-number-of-renews-per-min: 2
+
 
 ---
 server:
@@ -11,6 +35,9 @@ spring:
 eureka:
   instance:
     hostname: peer1
+    appname: peer1
+  client:
+    register-with-eureka: true
 
 ---
 server:
@@ -20,6 +47,7 @@ spring:
 eureka:
   instance:
     hostname: peer2
+    appname: peer2
 
 ---
 server:
@@ -29,3 +57,4 @@ spring:
 eureka:
   instance:
     hostname: peer3
+    appname: peer3

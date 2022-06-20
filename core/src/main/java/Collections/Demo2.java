@@ -21,7 +21,7 @@ public class Demo2 {
 
     private static void demo1() {
         String[] strings = new String[]{"hello", "world"};
-        // 适配器模式， 底层是数组，
+        //
         List<String> strings1 = Arrays.asList(strings);
         try {
             strings1.add("no");

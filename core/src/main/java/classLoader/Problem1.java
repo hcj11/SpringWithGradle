@@ -26,6 +26,6 @@ public class Problem1 {
 
     public static void main(String[] args) {
         Son son = new Son();
-        System.out.println(son.hello); // ->先实例化父类构造方法，最红执行子类的成员赋值。顺序需要搞清楚。
+        System.out.println(son.hello); //
     }
 }

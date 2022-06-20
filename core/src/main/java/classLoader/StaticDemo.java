@@ -10,7 +10,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 
 /*
- 虚拟机类加载机制
 * @author  houchunjian
 * @date  2020/11/28 0028 14:44
 * @param null
@@ -30,18 +29,6 @@ class CustomInterfaceImpl implements CustomInterface {
 }
 
 /**
- * 解析阶段， 根据符号引用去解析 class or interface , 或者 字段解析 或者 方法解析 , 接口方法的解析。
- * 字段解析
- * 1. 自下向上， 先自身查询
- * 2. 先接口递归查询，后class 递归查询
- *
- * 方法解析
- * 1. 自下向上， 先自身查询
- * 2. 先class递归查询，后接口递归查询
- *
- * 接口方法解析 ->  先从父接口去加载-> 子接口
- *
- * vs  类的初始化阶段，   区分。面试常考。=
  *
  */
 interface ParentAInterface{
@@ -50,7 +37,7 @@ interface ParentAInterface{
 }
   class ParentA {
     static {
-        System.out.println("先触发父类的初始化");
+        System.out.println("");
     }
     static int value = 123;
     public ParentA(int feature){};
@@ -59,7 +46,7 @@ interface ParentAInterface{
   }
 class A extends ParentA implements ParentAInterface{
     static {
-        System.out.println("触发子类的初始化");
+        System.out.println("");
     }
     static int value=2;
     public A(){super(1);}
@@ -80,7 +67,7 @@ public class StaticDemo implements Cloneable {
     final  String a = "";
 
     static {
-        System.out.println("new 初始化类,只初始化一次");
+        System.out.println("new");
     }
 
     static void hello() {
@@ -88,7 +75,6 @@ public class StaticDemo implements Cloneable {
     }
 
     /**
-     * 触发 class 的初始化
      */
     public static void demo1() throws CloneNotSupportedException, NoSuchMethodException {
         StaticDemo staticDemo = new StaticDemo("hcj");
@@ -115,7 +101,6 @@ public class StaticDemo implements Cloneable {
     public static void main(String[] args) throws CloneNotSupportedException, NoSuchMethodException {
         log.info("{}", A.value);
         /**
-         *  idea 的代码的文本分析。 确定相关的逻辑。
          */
 
     }

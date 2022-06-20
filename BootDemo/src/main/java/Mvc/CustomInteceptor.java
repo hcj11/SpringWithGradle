@@ -14,7 +14,6 @@ public class CustomInteceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // ²éÑ¯ÊÖ»úºÅ¡£
 //        if(request.getHeader("").equalsIgnoreCase("")){
 //            return false;
 //        }
