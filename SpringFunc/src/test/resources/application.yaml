@@ -27,4 +27,4 @@ redis:
 spring:
   profiles: local
 logging:
-  config: classpath:/logback-test.xml
+  config: classpath:logback-test.xml
