@@ -104,7 +104,7 @@ public class AutoConfiguration {
         ConfigurableEnvironment environment = context.getEnvironment();
         String name = environment.getProperty("name");
         Assertions.assertNull(name);
-        Assertions.assertFalse(context.containsBean("autoconfiguration.AutoConfigurationTestForBeforeConfig$DummyConfiguration"));
+        Assertions.assertTrue(context.containsBean("autoconfiguration.AutoConfigurationTestForBeforeConfig$DummyConfiguration"));
     }
     @Test
     public void AutoConfigureAfterAnnoInUse(){
@@ -115,7 +115,7 @@ public class AutoConfiguration {
         ConfigurableEnvironment environment = context.getEnvironment();
         String name = environment.getProperty("name");
         Assertions.assertNull(name);
-        Assertions.assertFalse(context.containsBean("autoconfiguration.AutoConfigurationTestForAfterConfig$DummyConfiguration"));
+        Assertions.assertTrue(context.containsBean("autoconfiguration.AutoConfigurationTestForAfterConfig$DummyConfiguration"));
 
 
     }

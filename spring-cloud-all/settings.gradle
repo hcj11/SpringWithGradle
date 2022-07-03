@@ -4,3 +4,20 @@ include(':eureka-server')
 findProject(':eureka-server')?.name = 'eureka-server'
 include(':eureka-client')
 findProject(':eureka-client')?.name = 'eureka-client'
+
+include(':config-server')
+findProject(':config-server')?.name = 'config-server'
+include(':config-client')
+findProject(':config-client')?.name = 'config-client'
+
+include(':loadBalancer')
+findProject(':loadBalancer')?.name = 'loadBalancer'
+
+include(':gateway-server')
+findProject(':gateway-server')?.name = 'gateway-server'
+
+include(':webFlux')
+findProject(':webFlux')?.name = 'webFlux'
+
+include(':gs-gateway')
+findProject(':gs-gateway')?.name = 'gs-gateway'

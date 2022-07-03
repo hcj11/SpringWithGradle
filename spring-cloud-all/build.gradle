@@ -33,6 +33,8 @@ ext{
 
 repositories {
     mavenCentral()
+    mavenLocal()
+    maven {url 'https://maven.aliyun.com/nexus/content/groups/public'}
 }
 task hello {
     doLast {
@@ -52,8 +54,10 @@ allprojects {
 
     repositories {
         mavenLocal()
+        maven {url 'https://maven.aliyun.com/nexus/content/groups/public'}
     }
     dependencies {
+        implementation 'cn.hutool:hutool-all:5.4.3'
         // use from pom to import parent version.
         implementation enforcedPlatform('org.springframework.boot:spring-boot-dependencies:2.2.9.RELEASE')
         implementation enforcedPlatform('org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12')

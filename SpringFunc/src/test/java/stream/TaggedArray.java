@@ -51,9 +51,9 @@ class TaggedArray<T> {
             int lo = origin; // divide range in half
             int mid = ((lo + fence) >>> 1) & ~1; // force midpoint to be even
             if (lo < mid) { // split out left half
-                origin = mid; // reset this Spliterator's origin  继续分离左半部分，
+                origin = mid; // reset this Spliterator's origin
                 return new TaggedArraySpliterator<>(array, lo, mid);
-            } else       // too small to split // lo > mid 9,18 不分,
+            } else       // too small to split // lo > mid 9,18
                 return null;
         }
  // 9  //

@@ -4,11 +4,15 @@ import lombok.Data;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 @Data
+@Service
+@Resource
 public class Utils {
     public static  AtomicReference<ConfigurableEnvironment> reference = new AtomicReference<>();
     /**

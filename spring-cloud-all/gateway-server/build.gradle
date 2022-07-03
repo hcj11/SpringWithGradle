@@ -1,0 +1,53 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+
+}
+configurations.all {
+    exclude( group:'io.projectreactor.netty',module:'reactor-netty')
+}
+dependencies {
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation( 'org.springframework.boot:spring-boot-starter-actuator')
+    implementation( 'org.springframework.cloud:spring-cloud-loadbalancer')
+    testImplementation('org.springframework.cloud:spring-cloud-test-support:2.2.9.RELEASE')
+    testImplementation('io.projectreactor:reactor-test')
+//    implementation('org.springframework.cloud:spring-cloud-starter-netflix-ribbon')
+//    implementation('org.springframework.cloud:spring-cloud-starter-netflix-hystrix')
+//    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.2.9.RELEASE'
+    implementation 'io.netty:netty-all:4.1.71.Final'
+    implementation 'org.yaml:snakeyaml:1.26'
+    implementation( 'org.springframework.boot:spring-boot-starter-webflux')
+    implementation('org.springframework.cloud:spring-cloud-gateway-core')
+    implementation( 'org.springframework.cloud:spring-cloud-context')
+    implementation( 'org.springframework.cloud:spring-cloud-commons')
+}
+
+task hello {
+    doLast {
+        System.out.println('==parent:=' + parent?.name);
+        rootProject.allprojects.forEach( {
+            System.out.println('==1=' + it.name)
+        });
+    }
+}
+
+jar{
+    def d =  UUID.randomUUID().toString()
+    testResultsDirName = "$buildDir/test-result-"+d
+}
+
+test {
+    useJUnitPlatform()
+}

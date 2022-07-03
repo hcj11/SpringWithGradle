@@ -1,0 +1,35 @@
+
+
+plugins {
+    id 'java-library'
+    id 'idea'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation( 'org.springframework.boot:spring-boot-starter-webflux')
+    implementation 'com.google.guava:guava:29.0-jre'
+    implementation( 'org.springframework.boot:spring-boot-autoconfigure')
+}
+
+task hello {
+    doLast {
+        System.out.println('==parent:=' + parent?.name);
+        rootProject.allprojects.forEach( {
+            System.out.println('==1=' + it.name)
+        });
+    }
+}
+
+jar{
+}
+test {
+    useJUnitPlatform()
+}

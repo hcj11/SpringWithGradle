@@ -6,6 +6,7 @@ plugins {
 group 'org.example'
 version '1.0-SNAPSHOT'
 
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -25,7 +26,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.postgresql/postgresql
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
 
-    // alibaba
+    // alibaba have conflict with netflix
     implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:' + "${property('alibaba.version')}"
 // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign'

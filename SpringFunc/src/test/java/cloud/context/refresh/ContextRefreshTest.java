@@ -1,14 +1,10 @@
 package cloud.context.refresh;
 
-import cloud.bootstrap.TestBootstrapConfiguration;
-import cloud.bootstrap.TestHigherPriorityBootstrapConfiguration;
 import cn.hutool.core.lang.Assert;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
-import org.springframework.cloud.bootstrap.BootstrapApplicationListener;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
@@ -33,7 +29,7 @@ public class ContextRefreshTest {
 
     public String getExternalProperitiesLocation() {
 
-        return "classpath:/external-properties/bootstrap.properties";
+        return "classpath:external-properties/bootstrap.properties";
     }
 
     @Test
@@ -96,7 +92,6 @@ public class ContextRefreshTest {
 
         }
     }
-
     @Test
     public void pickupOnlyExternalProperties() {
         String location = getExternalProperitiesLocation();
@@ -138,6 +133,7 @@ public class ContextRefreshTest {
             List<String> names = names(context.getEnvironment().getPropertySources());
             then(names).doesNotContain(
                     "applicationConfig: [classpath:/bootstrap-refresh.properties]");
+
             ContextRefresher refresher = new ContextRefresher(context, refresh);
             refresher.refresh();
             names = names(context.getEnvironment().getPropertySources());
@@ -199,25 +195,25 @@ public class ContextRefreshTest {
 
     }
 
-    @Test
-    public void commandLineArgsPassedToBootstrapConfiguration() {
-
-        TestBootstrapConfiguration.firstCreated = Lists.<String>newArrayList();
-        try (ConfigurableApplicationContext context = SpringApplication.run(ContextRefreshTest.class, new String[]{
-                "--test.bootstrap.foo=bar",
-                "--spring.cloud.bootstrap.name=refresh", "--spring.main.web-application-type=none"
-                , "--debug=false", "--spring.main.bannerMode=OFF"
-        })) {
-            context.getEnvironment().setActiveProfiles("refresh");
-            ContextRefresher contextRefresher = new ContextRefresher(context, refresh);
-            Set<String> refresh = contextRefresher.refresh();
-            log.info("===========refresh key:{}", refresh);
-            then(TestBootstrapConfiguration.firstCreated).containsExactly("bar", "bar");
-            then(TestHigherPriorityBootstrapConfiguration.count).hasValue(-2);
-            then(TestHigherPriorityBootstrapConfiguration.firstRefrence).hasValue(TestHigherPriorityBootstrapConfiguration.class);
-        }
-
-        TestBootstrapConfiguration.firstCreated = null;
-    }
+//    @Test
+//    public void commandLineArgsPassedToBootstrapConfiguration() {
+//
+//        TestBootstrapConfiguration.firstCreated = Lists.<String>newArrayList();
+//        try (ConfigurableApplicationContext context = SpringApplication.run(ContextRefreshTest.class, new String[]{
+//                "--test.bootstrap.foo=bar",
+//                "--spring.cloud.bootstrap.name=refresh", "--spring.main.web-application-type=none"
+//                , "--debug=false", "--spring.main.bannerMode=OFF"
+//        })) {
+//            context.getEnvironment().setActiveProfiles("refresh");
+//            ContextRefresher contextRefresher = new ContextRefresher(context, refresh);
+//            Set<String> refresh = contextRefresher.refresh();
+//            log.info("===========refresh key:{}", refresh);
+//            then(TestBootstrapConfiguration.firstCreated).containsExactly("bar", "bar");
+//            then(TestHigherPriorityBootstrapConfiguration.count).hasValue(-2);
+//            then(TestHigherPriorityBootstrapConfiguration.firstRefrence).hasValue(TestHigherPriorityBootstrapConfiguration.class);
+//        }
+//
+//        TestBootstrapConfiguration.firstCreated = null;
+//    }
 
 }

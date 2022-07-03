@@ -1,5 +1,6 @@
 package spring;
 
+import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.shared.Applications;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration;
 import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClientConfiguration;
@@ -20,6 +22,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 import utils.Utils;
+
+import java.util.List;
 
 @NoArgsConstructor
 class CustomApplicationContextInitializerC implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -40,6 +44,7 @@ public class SpringDemoForClient {
     @Autowired(required = false)
     private EurekaClient eurekaClient;
 
+
     @EnableEurekaClient
 //    @ImportAutoConfiguration({DiscoveryClientOptionalArgsConfiguration.class,EurekaClientAutoConfiguration.class,EurekaDiscoveryClientConfiguration.class})
     @EnableAutoConfiguration
@@ -50,7 +55,6 @@ public class SpringDemoForClient {
      */
     @Test
     public void demo1() throws InterruptedException {
-        Applications applications = eurekaClient.getApplications();
 
         synchronized (lock){lock.wait();}
     }

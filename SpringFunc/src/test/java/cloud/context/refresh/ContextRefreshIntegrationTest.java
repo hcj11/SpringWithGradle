@@ -12,13 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ContextRefreshIntegrationTest.TestBeanConfiguration.class})
@@ -34,13 +34,13 @@ public class ContextRefreshIntegrationTest {
     private ContextRefresher contextRefresher;
 
     @Test
-    public void refreshProperties(){
+    public void refreshProperties() {
         String msg = testProperties.getMsg();
-        assertEquals(msg,"hello,scope!");
+        assertEquals(msg, "hello,scope!");
         testProperties.setMsg("got it !!!");
         ContextRefresher contextRefresher = new ContextRefresher(applicationContext, mock);
         contextRefresher.refresh();
-        assertEquals(msg,"hello,scope!");
+        assertEquals(msg, "hello,scope!");
     }
 
     @EnableConfigurationProperties(value = TestProperties.class)

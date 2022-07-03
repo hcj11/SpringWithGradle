@@ -1,0 +1,24 @@
+# Initializers
+#org.springframework.context.ApplicationContextInitializer=\
+# org.springframework.boot.autoconfigure.SharedMetadataReaderFactoryContextInitializer,\
+# org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener
+
+# Application Listeners
+#org.springframework.context.ApplicationListener=\
+#org.springframework.boot.autoconfigure.BackgroundPreinitializer
+
+# Auto Configuration Import Listeners
+#org.springframework.boot.autoconfigure.AutoConfigurationImportListener=\
+
+# Auto Configuration Import Filters
+#org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
+
+# Auto Configure
+#org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+#com.log.LogAutoConfiguration
+
+# Failure analyzers
+#org.springframework.boot.diagnostics.FailureAnalyzer=\
+
+# Template availability providers
+#org.springframework.boot.autoconfigure.template.TemplateAvailabilityProvider=\

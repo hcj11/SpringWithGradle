@@ -1,0 +1,42 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Hikar
+    implementation 'com.zaxxer:HikariCP:2.3.13'
+    implementation "mysql:mysql-connector-java:${property('mysql.version')}"
+    implementation('org.springframework:spring-jdbc')
+    implementation 'org.springframework.cloud:spring-cloud-config-server'
+    // only add the client
+    implementation( 'org.springframework.cloud:spring-cloud-context')
+    implementation( 'org.springframework.cloud:spring-cloud-commons')
+    // and add the web
+    implementation( 'org.springframework.boot:spring-boot-starter-web')
+}
+
+task hello {
+    doLast {
+        System.out.println('==parent:=' + parent?.name);
+        rootProject.allprojects.forEach( {
+            System.out.println('==1=' + it.name)
+        });
+    }
+}
+
+jar{
+    def d =  UUID.randomUUID().toString()
+    testResultsDirName = "$buildDir/test-result-"+d
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -400,13 +400,14 @@ public class CustomConcurrency {
                 public void run() {
                     do {
                         task.run();
-                        phaser.arriveAndAwaitAdvance();
+                        int i = phaser.arriveAndAwaitAdvance();// ->0
                     } while (!phaser.isTerminated());
                 }
             }.start();
-        }
+        } // 3-2=1 => onAdvance, to terminal
+        // 3-1=2 and need to arriveAndAwaitAdvance
         phaser.arriveAndDeregister(); // deregister self, don't wait
-        phaser.arriveAndDeregister();
+//        phaser.arriveAndDeregister(); // parties=1;
         synchronized (lock) {
             lock.wait();
         }
@@ -414,9 +415,9 @@ public class CustomConcurrency {
     }
 
     void awaitPhase(int phase) {
-        Phaser phaser = new Phaser(); // parties = 0 ,state =1 ;
+        Phaser phaser = new Phaser(); // parties = 0 ,state =1 ;arrivied=0
         int p = phaser.register(); // assumes caller not already registered
-        while (p < phase) {
+        while (p < phase) { //  1<3++;
             if (phaser.isTerminated()) {
                 // for example:   if (UNSAFE.compareAndSwapLong(this, stateOffset, s,s -= ONE_ARRIVAL)) {
                 log.info("unexpected Terminated {},initPhase:{}", p, phase);
@@ -426,6 +427,11 @@ public class CustomConcurrency {
         Assert.assertEquals(p, 10);
 
         int i = phaser.arriveAndDeregister();
+
+    }
+    @Test
+    public void PahrserTest2(){
+        awaitPhase(10);
 
     }
 
@@ -479,6 +485,31 @@ public class CustomConcurrency {
         }
     }
 
+
+    @Test
+    public void ParentAndChildOfPharse() throws InterruptedException {
+        CountDownLatch countDownLatch = new CountDownLatch(4);
+
+        Phaser phaser = new Phaser(0);
+        phaser.register();// parties=1
+        Task[] initTasks = {null, null, null, null};
+        build(initTasks, 0, 4, phaser, countDownLatch);
+        countDownLatch.await();
+
+        // register and then bootstrap
+        ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
+        Arrays.stream(initTasks).parallel().forEach(s -> {
+            forkJoinPool.submit(s);
+        });
+
+        phaser.arriveAndDeregister();
+
+        synchronized (lock) {
+            lock.wait();
+        }
+
+
+    }
     //  Phaser ,  SynchronousQueue , ListenableFuture
     void runTasks(List<Runnable> tasks) throws InterruptedException {
         final Phaser phaser = new Phaser(1); // "1" to register self        parties =1 -》 直接释放掉
@@ -498,31 +529,6 @@ public class CustomConcurrency {
 //        synchronized (lock){
 //            lock.wait();
 //        }
-    }
-
-    @Test
-    public void ParentAndChildOfPharse() throws InterruptedException {
-        CountDownLatch countDownLatch = new CountDownLatch(4);
-
-        Phaser phaser = new Phaser(0);
-        phaser.register();
-        Task[] initTasks = {null, null, null, null};
-        build(initTasks, 0, 4, phaser, countDownLatch);
-        countDownLatch.await();
-
-        // register and then bootstrap
-        ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
-        Arrays.stream(initTasks).parallel().forEach(s -> {
-            forkJoinPool.submit(s);
-        });
-
-        phaser.arriveAndDeregister();
-
-        synchronized (lock) {
-            lock.wait();
-        }
-
-
     }
 
     @Test
