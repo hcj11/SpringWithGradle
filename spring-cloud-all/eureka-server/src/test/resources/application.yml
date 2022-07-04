@@ -1,7 +1,7 @@
 ﻿eureka:
   client:
     serviceUrl:
-      defaultZone: http://peer1:8761/eureka/,http://peer2:8762/eureka/,http://peer3:8763/eureka/
+      defaultZone: http://${peer1}:8761/eureka/,http://${peer2}:8762/eureka/,http://${peer3}:8763/eureka/
     eureka-service-url-poll-interval-seconds: 30
     registry-fetch-interval-seconds: 30
     heartbeat-executor-exponential-back-off-bound: 10 #  if operation  fail , registry-fetch-interval-seconds  * heartbeat-executor-exponential-back-off-bound

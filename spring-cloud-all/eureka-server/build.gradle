@@ -13,12 +13,8 @@ repositories {
 }
 
 dependencies {
-    // add  server and client
+    implementation 'org.springframework.cloud:spring-cloud-config-client'
     implementation( 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
-//    implementation "org.springframework:spring-jms:${property('spring.version')}"
-//    implementation "org.springframework:spring-beans:${property('spring.version')}"
-//    implementation "org.springframework:spring-core:${property('spring.version')}"
-//    implementation "org.springframework:spring-context:${property('spring.version')}"
 
 
 }
