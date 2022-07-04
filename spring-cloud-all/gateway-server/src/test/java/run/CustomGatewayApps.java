@@ -66,6 +66,11 @@ public class CustomGatewayApps {
     }
     Object lock = new Object();
     @Test
+    public void startUp() throws InterruptedException {
+        Utils.print(applicationContext);
+        synchronized (lock){lock.wait();}
+    }
+    @Test
     public void getSimple() throws InterruptedException {
 
         buildSimple.get().uri("/get").header("Host","www.readbody.org").exchange().expectBody().consumeWith((EntityExchangeResult<byte[]> result) -> {
