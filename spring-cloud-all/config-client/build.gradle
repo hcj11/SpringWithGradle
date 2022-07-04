@@ -35,6 +35,8 @@ task hello {
 }
 
 jar{
+    def d =  UUID.randomUUID().toString()
+    testResultsDirName = "$buildDir/test-result-"+d
 }
 test {
     useJUnitPlatform()

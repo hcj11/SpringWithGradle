@@ -19,6 +19,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import utils.Utils;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+
 @SpringBootTest(classes = StartUp.Dummy.class,
         webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,properties = "server.port=8888")
 public class StartUp {
@@ -38,15 +41,23 @@ public class StartUp {
     // how to load properties  from config server
     @Test
     public void loadPropertySourceOrder(){
+
+
         String property = environment.getProperty("a.b");
         Assertions.assertEquals(property,"zzzz");
         Assertions.assertNull(environment.getProperty("a.b.c"));
     }
     @Test
     public void startUp() throws InterruptedException {
+        String address = environment.getProperty("server.address");
+
         String property = environment.getProperty("spring.datasource.driverClassName");
         Assertions.assertEquals(property,"com.mysql.jdbc.Driver");
-        System.out.println(String.format("port:%s",port));
+        String peer2 = environment.getProperty("peer2");
+
+//        Assertions.assertEquals(peer2,"localhost");
+        System.out.println(String.format("address:%s,port:%s",address,port));
+        Utils.print(context);
         synchronized (lock) {
             lock.wait();
         }

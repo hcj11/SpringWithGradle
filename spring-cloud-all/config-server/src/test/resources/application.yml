@@ -3,8 +3,18 @@
     foo: default_yml
 logging:
   config: classpath:config/logback-boot.xml
+  # spring.cloud.config.server type List<Map<String, Object>> composite;
+  # NativeEnvironmentRepository
 spring:
-#  redis:
+  cloud:
+    config:
+      server:
+        composite:
+          - {type: 'jdbc',sql: 'SELECT `KEY`, `VALUE` from PROPERTIES where APPLICATION=? and PROFILE=? and LABEL=?'}
+          - {type: 'native' ,searchLocations: ['classpath:/config/']}
+        jdbc:
+          enabled: true
+  #  redis:
 #    database: 0
 #    host: 127.0.0.1
 #    port: 6379
@@ -18,10 +28,10 @@ spring:
 #        min-idle: 5       # 连接池中的最小空闲连接
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.1.96:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://172.168.1.96:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: root
   main:
     allow-bean-definition-overriding: true
   profiles:
-    active: jdbc
+    active: composite
