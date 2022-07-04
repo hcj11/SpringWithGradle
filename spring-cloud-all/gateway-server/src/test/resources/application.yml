@@ -11,6 +11,8 @@
         enabled: false
   main:
     web-application-type: reactive
+  application:
+    name: gateway
 
 listinfo:
   list:

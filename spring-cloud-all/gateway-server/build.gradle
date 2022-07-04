@@ -18,6 +18,7 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation 'org.springframework.cloud:spring-cloud-config-client'
     implementation( 'org.springframework.boot:spring-boot-starter-actuator')
     implementation( 'org.springframework.cloud:spring-cloud-loadbalancer')
     testImplementation('org.springframework.cloud:spring-cloud-test-support:2.2.9.RELEASE')
