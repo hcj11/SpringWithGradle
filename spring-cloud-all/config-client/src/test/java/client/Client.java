@@ -63,6 +63,11 @@ public class Client {
 
         Assertions.assertEquals(property,"x" );
         Assertions.assertEquals(property2,"ghj" );
+        String peer2 = environment.getProperty("peer2");
+
+        Assertions.assertEquals(peer2,"localhost");
+
+
 
     }
 
