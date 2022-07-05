@@ -14,7 +14,10 @@
     web-application-type: reactive
   application:
     name: gateway
-
+eureka:
+  instance:
+    virtual-host-name: gateway
+    hostname: ${gateway}
 listinfo:
   list:
     - { name: 'hcj',map: { key1: 'val1',key2: 'val2' },list: [ 'a','b' ] }

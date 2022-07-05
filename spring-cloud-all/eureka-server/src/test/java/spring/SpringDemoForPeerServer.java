@@ -75,6 +75,9 @@ public class SpringDemoForPeerServer {
         log.info("startup web is port:{},pid:{},property:{}",port,name,property);
         synchronized (lock){lock.wait();}
     }
+    /**
+     * refreshScope test
+     */
     @Slf4j
     @Configuration
     static class  ScheduledTask{

@@ -55,8 +55,9 @@ public class RequestClientTest {
     @Test
     public void loadBalancerClientToRequestOtherThanRoute(){
         // plain/text
-        String forObject = restTemplate.getForObject("/get", String.class);
-        Assertions.assertEquals(forObject,"hcj");
+        String uri="http://peer2/actuator/env";
+        String env = restTemplate.getForObject(uri, String.class);
+        log.info("{}",env);
     }
 
     @Test
