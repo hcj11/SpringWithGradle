@@ -40,8 +40,6 @@ public class LoadBalancerClient {
         String eureka = environment.getProperty("eureka");
         Assertions.assertEquals(eureka,"172.168.1.73:8761");
         String name = environment.getProperty(LoadBalancerClientFactory.PROPERTY_NAME);
-//        Assertions.assertEquals(name,"config-client");
-        // LoadBalancerClientFactory
 
 
         String uri= "http://myservice1/get";
@@ -49,8 +47,8 @@ public class LoadBalancerClient {
         Assertions.assertEquals(forObject,"hcj");
 
         uri= "http://peer2/actuator/env";
-        String exception = restTemplate.getForObject(uri, String.class);
-        log.info("{}",exception);
+        String env = restTemplate.getForObject(uri, String.class);
+        log.info("{}",env);
 
 
     }

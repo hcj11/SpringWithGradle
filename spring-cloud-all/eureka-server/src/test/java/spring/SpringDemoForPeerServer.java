@@ -4,23 +4,30 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.shared.Applications;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.message.Message;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.config.ConfigFileApplicationListener;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.support.TestPropertySourceUtils;
@@ -41,11 +48,14 @@ public class SpringDemoForPeerServer {
     public int port;
     Object lock = new Object();
 
-    @ImportAutoConfiguration(ConfigFileApplicationListener.class)
+    @EnableScheduling
+    @ImportAutoConfiguration({ConfigFileApplicationListener.class,ScheduledTask.class})
     @EnableAutoConfiguration
     @EnableEurekaServer
     @Configuration
-    public static class Dummy{}
+    public static class Dummy{
+
+    }
     @Autowired
     EurekaClient discoveryClient;
     /**
@@ -65,6 +75,27 @@ public class SpringDemoForPeerServer {
         log.info("startup web is port:{},pid:{},property:{}",port,name,property);
         synchronized (lock){lock.wait();}
     }
+    @Slf4j
+    @Configuration
+    static class  ScheduledTask{
+        @Scheduled(fixedRate = 5000)
+        public void run(){
+            String msg = message().getMsg();
+            log.info("=======================current msg: {}",msg);
+        }
+        @RefreshScope
+        @Bean
+        public Message message(){
+            return new Message();
+        }
+        @Data
+        static class Message{
+            @Value(value = "${refresh.message:nothing}")
+            private String msg;
+        }
+
+    }
+
 
 
 
