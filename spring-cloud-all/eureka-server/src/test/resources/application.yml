@@ -41,7 +41,7 @@ spring:
     name: peer1
 eureka:
   instance:
-    hostname: peer1
+    hostname: ${peer1}
     appname: peer1
   client:
     register-with-eureka: true
@@ -55,7 +55,7 @@ spring:
     name: peer2
 eureka:
   instance:
-    hostname: peer2
+    hostname: ${peer2}
     appname: peer2
   client:
     register-with-eureka: true
@@ -69,5 +69,5 @@ spring:
     name: peer3
 eureka:
   instance:
-    hostname: peer3
+    hostname: ${peer3}
     appname: peer3
