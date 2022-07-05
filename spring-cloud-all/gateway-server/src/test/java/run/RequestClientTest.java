@@ -2,6 +2,7 @@ package run;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -11,12 +12,9 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient;
 import org.springframework.cloud.gateway.config.GatewayProperties;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.LoadBalancerClientFilter;
-import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,52 +31,49 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_HANDLER_MAPPER_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR;
-
-@Data
 @Slf4j
-@SpringBootTest(classes = CustomGatewayApps.Dummy.class,properties = {"server.port=9090","management.server.port=9091"}
-        ,webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class CustomGatewayApps {
+@Data
+public class RequestClientTest {
 
     @Autowired
     private GatewayProperties gatewayProperties;
-    @Autowired
-    private ListInfo listInfo;
-
     static WebTestClient buildSimple;
-    static WebTestClient build;
-    static int  managementPort =0;
-    @Autowired
-    GenericApplicationContext applicationContext;
-    @Autowired
-    DiscoveryClient discoveryClient;
-
-
-
-    // todo pro: don't load the yourself 's property.
-//    @BeforeClass
-//    public static void beforeClass() {
-//        managementPort = SocketUtils.findAvailableTcpPort();
-//        System.setProperty("test.port", String.valueOf(managementPort));
-//    }
 
     @BeforeAll
     public static void setUp() {
-        buildSimple = WebTestClient.bindToServer().baseUrl("http://localhost:9090/").responseTimeout(Duration.ofHours(1)).build();
+        buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.73:9090/").responseTimeout(Duration.ofHours(1)).build();
     }
     Object lock = new Object();
-
+    /**
+     * use the metric and others to look the bean .to locate the pro.
+     */
+    @Autowired
+    private RestTemplate restTemplate;
+    @Test
+    public void loadBalancerClientToRequestOtherThanRoute(){
+        // plain/text
+        String forObject = restTemplate.getForObject("/get", String.class);
+        Assertions.assertEquals(forObject,"hcj");
+    }
 
     @Test
-    public void startUp() throws InterruptedException {
-        Utils.print(applicationContext);
-        synchronized (lock){lock.wait();}
+    public void requestLocalService(){
+        buildSimple.post().uri("/rewrite").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
+            Map responseBody = mapEntityExchangeResult.getResponseBody();
+            HttpHeaders responseHeaders = mapEntityExchangeResult.getResponseHeaders();
+            assertThat(responseHeaders).containsEntry("X-Response-Default-Foo", Lists.newArrayList("Default-Bar"));
+            assertThat(responseBody).containsEntry("type","rewrite");
+        });
+        buildSimple.get().uri("/get").exchange().expectBody(String.class).consumeWith(mapEntityExchangeResult -> {
+            String responseBody = mapEntityExchangeResult.getResponseBody();
+            assertThat(responseBody).isEqualTo("hcj");
+        });
     }
     @Test
     public void getSimple() throws InterruptedException {
-
         buildSimple.get().uri("/get").header("Host","www.readbody.org").exchange().expectBody().consumeWith((EntityExchangeResult<byte[]> result) -> {
             HttpHeaders responseHeaders = result.getResponseHeaders();
             byte[] responseBody = result.getResponseBody();
@@ -103,11 +98,8 @@ public class CustomGatewayApps {
         });
     }
 
-    @Disabled
-    @Test
-    public void get3() {
-        System.out.println(listInfo);
-    }
+
+
     @Disabled
     @Test
     public void get() {
@@ -133,50 +125,4 @@ public class CustomGatewayApps {
 
     }
 
-    @Import(com.SpringBootGatewayApps.class)
-    @EnableAutoConfiguration
-    @Configuration
-    static class Dummy {
-        protected static final String HANDLER_MAPPER_HEADER = "X-Gateway-Handler-Mapper-Class";
-
-        protected static final String ROUTE_ID_HEADER = "X-Gateway-RouteDefinition-Id";
-        @Bean
-        public ListInfo listInfo() {
-            return new ListInfo();
-        }
-
-        @Order(500)
-        @Bean
-        public GatewayFilter captureResponse(){
-            return  (exchange, chain) -> {
-                String value = exchange.getAttributeOrDefault(GATEWAY_HANDLER_MAPPER_ATTR,
-                        "N/A");
-                if (!exchange.getResponse().isCommitted()) {
-                    exchange.getResponse().getHeaders().add(HANDLER_MAPPER_HEADER, value);
-                }
-                Route route = exchange.getAttributeOrDefault(GATEWAY_ROUTE_ATTR, null);
-                if (route != null) {
-                    if (!exchange.getResponse().isCommitted()) {
-                        exchange.getResponse().getHeaders().add(ROUTE_ID_HEADER,
-                                route.getId());
-                    }
-                }
-                return chain.filter(exchange);
-            };
-        }
-    }
-
-    @Data
-    @ConfigurationProperties(prefix = "listinfo")
-    static class ListInfo {
-
-        private List<Info> list;
-    }
-
-    @Data
-    static class Info {
-        private List<String> list;
-        private Map<String, String> map;
-        private String name;
-    }
 }

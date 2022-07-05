@@ -1,14 +1,11 @@
 package refresh;
 
-import org.apache.logging.log4j.message.Message;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.cloud.autoconfigure.LifecycleMvcEndpointAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.cloud.client.ConditionalOnReactiveDiscoveryEnabled;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.context.environment.EnvironmentManager;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -16,7 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import utils.Utils;
+
+import static utils.Utils.print;
 
 /**
  *  startup the apps,
@@ -25,6 +23,23 @@ import utils.Utils;
 public class RefreshScopeTest {
 
     AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+    @Test
+    public void refreshOnBeanWithoutRefreshScopeAnno() {
+        context.register(Controller.class, PropertyPlaceholderAutoConfiguration.class,
+                PropertySourcesPlaceholderConfigurer.class, RefreshAutoConfiguration.class,
+                LifecycleMvcEndpointAutoConfiguration.class
+        );
+        context.refresh();
+        Controller.OldMessage bean = context.getBean(Controller.OldMessage.class);
+        String id1=bean.toString();
+        String s = bean.sayHello();
+        Assertions.assertEquals(s,"hello");
+        RefreshAll();
+        Controller.OldMessage bean2 = context.getBean(Controller.OldMessage.class);
+        String s1 = bean2.sayHello();
+        Assertions.assertEquals(s1,"hello");
+        Assertions.assertNotEquals(id1,bean2.toString());
+    }
     @Test
     public void refreshOnBean(){
         context.register(Controller.class, PropertyPlaceholderAutoConfiguration.class,
@@ -52,7 +67,7 @@ public class RefreshScopeTest {
                 LifecycleMvcEndpointAutoConfiguration.class
         );
         context.refresh();
-        Utils.print(context);
+        print(context);
 
         Application bean = context.getBean(Application.class);
         String s = bean.sayHello();
@@ -101,11 +116,21 @@ public class RefreshScopeTest {
     }
     @Configuration
     public static class Controller{
-
         @RefreshScope
         @Bean
         public Message msg(){
            return new Message();
+        }
+        @Bean
+        public OldMessage oldMessage(){return new OldMessage();}
+
+        public static class OldMessage{
+            @Value("${message:hello}")
+            public String msg;
+
+            public String sayHello(){
+                return msg;
+            }
         }
 
        public static class Message{

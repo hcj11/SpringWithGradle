@@ -4,7 +4,11 @@ import lombok.Data;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
@@ -24,5 +28,12 @@ public class Utils {
 
         Stream.of(context.getBeanDefinitionNames()).forEach(System.out::println);
     }
+    public static List<String> names(MutablePropertySources propertySources) {
 
+        List<String> list = new ArrayList<>();
+        for (PropertySource<?> p : propertySources) {
+            list.add(p.getName());
+        }
+        return list;
+    }
 }

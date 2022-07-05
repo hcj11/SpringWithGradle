@@ -13,7 +13,8 @@ repositories {
 }
 
 dependencies {
-
+    //     implementation( 'org.springframework.boot:spring-boot-starter-webflux')
+    implementation( 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
     implementation( 'org.springframework.cloud:spring-cloud-loadbalancer')
     implementation 'org.springframework.cloud:spring-cloud-config-client'
     implementation 'com.google.guava:guava:29.0-jre'

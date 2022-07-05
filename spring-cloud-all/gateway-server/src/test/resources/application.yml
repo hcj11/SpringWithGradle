@@ -5,6 +5,7 @@
         - AddResponseHeader=X-Response-Default-Foo, Default-Bar
       routes:
         - { id: gateway_route, uri: lb://myservice1, predicates: [ Path=/actuator/gateway/** ] , order: 300 }
+        - { id: gateway_route_eureka, uri: lb://peer2, predicates: [ Path=/actuator/** ] , order: 400 }
         - { id: default_path_route,uri: lb://myservice1, predicates: [ Path=/** ] ,filters:["PrefixPath=/httpbin"], order: 500 }
     loadbalancer:
       ribbon:
