@@ -52,14 +52,14 @@ public class RequestClientTest {
     Object lock = new Object();
     @Test
     public void requestLocalServiceWithCircuitBreakerToTimeOut(){
-        buildSimple.post().uri("/circuitBreaker/delay/2").header("HOST","www.circutbreakertimout.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
+        buildSimple.post().uri("/circuitBreaker/delay/2").header("HOST","www.circuitbreakertimeout.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
             HttpStatus status = mapEntityExchangeResult.getStatus();
             Assertions.assertTrue(status==SERVICE_UNAVAILABLE);
         });
     }
     @Test
     public void requestLocalServiceWithCircuitBreaker(){
-        buildSimple.post().uri("/circuitBreaker/open").header("HOST","www.circutbreaker.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
+        buildSimple.post().uri("/circuitBreaker/open").header("HOST","www.circuitbreaker.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
             HttpStatus status = mapEntityExchangeResult.getStatus();
             Assertions.assertTrue(status==SERVICE_UNAVAILABLE);
         });
