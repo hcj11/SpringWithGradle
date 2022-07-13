@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.client.RestTemplate;
@@ -34,6 +35,8 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_HANDLER_MAPPER_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR;
+import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
+
 @Slf4j
 @Data
 public class RequestClientTest {
@@ -47,7 +50,20 @@ public class RequestClientTest {
         buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.73:9090/").responseTimeout(Duration.ofHours(1)).build();
     }
     Object lock = new Object();
-
+    @Test
+    public void requestLocalServiceWithCircuitBreakerToTimeOut(){
+        buildSimple.post().uri("/circuitBreaker/delay/2").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
+            HttpStatus status = mapEntityExchangeResult.getStatus();
+            Assertions.assertTrue(status==SERVICE_UNAVAILABLE);
+        });
+    }
+    @Test
+    public void requestLocalServiceWithCircuitBreaker(){
+        buildSimple.post().uri("/circuitBreaker/open").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
+            HttpStatus status = mapEntityExchangeResult.getStatus();
+            Assertions.assertTrue(status==SERVICE_UNAVAILABLE);
+        });
+    }
     @Test
     public void requestLocalService(){
         buildSimple.post().uri("/rewrite").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {

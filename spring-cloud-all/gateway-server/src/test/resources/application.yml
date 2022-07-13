@@ -6,13 +6,13 @@ spring:
       default-filters:
         - AddResponseHeader=X-Response-Default-Foo, Default-Bar
       routes:
-        - { order: 200, id: gateway_circuit_breaker ,uri: "${test.uri}" , predicates: [Path=/circuitBreaker/open],
+        - { order: -1, id: gateway_circuit_breaker ,uri: "${test.uri}" , predicates: [Path=/circuitBreaker/open],
             filters:
               [{
-                name: CircuitBreaker,args:[{name: slowcmd , fallbackUri: foward:/rewrite}]
+                name: CircuitBreaker,args:[{name: slowcmd , fallbackUri: forward:/rewrite}]
               }]
          }
-        - {  order: 200,  id: gateway_circuit_breaker_timeOut ,uri: "${test.uri}" , predicates: [ Path=/circuitBreaker/delay/2 ],
+        - {  order: -1,  id: gateway_circuit_breaker_timeOut ,uri: "${test.uri}" , predicates: [ Path=/circuitBreaker/delay/2 ],
             filters:
               [{
                 name: CircuitBreaker,args:[{name: timoutcmd }]

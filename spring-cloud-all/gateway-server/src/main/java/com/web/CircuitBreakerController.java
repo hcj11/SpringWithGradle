@@ -17,6 +17,7 @@ public class CircuitBreakerController {
     @RequestMapping(value = "/delay/{integer}")
     public void timeout(@PathVariable("integer") Integer integer){
         log.info("wait {} seconds...",integer);
+        // gateway
         Mono.delay(Duration.ofSeconds(integer));
     }
     @RequestMapping(value = "/open")
