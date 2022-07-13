@@ -47,18 +47,6 @@ public class RequestClientTest {
         buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.73:9090/").responseTimeout(Duration.ofHours(1)).build();
     }
     Object lock = new Object();
-    /**
-     * use the metric and others to look the bean .to locate the pro.
-     */
-    @Autowired
-    private RestTemplate restTemplate;
-    @Test
-    public void loadBalancerClientToRequestOtherThanRoute(){
-        // plain/text
-        String uri="http://peer2/actuator/env";
-        String env = restTemplate.getForObject(uri, String.class);
-        log.info("{}",env);
-    }
 
     @Test
     public void requestLocalService(){

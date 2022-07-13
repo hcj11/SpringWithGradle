@@ -9,6 +9,8 @@ includeBuild('./nacos')
 includeBuild('./mq-all')
 includeBuild('./spring-cloud-all')
 includeBuild('./payment-system-all')
+includeBuild('./Spring-Boot-all')
+
 
 
 include 'JavaConcurrency'

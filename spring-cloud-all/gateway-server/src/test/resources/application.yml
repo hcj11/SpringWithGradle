@@ -1,10 +1,24 @@
-﻿spring:
+﻿test:
+  uri: lb://myservice1
+spring:
   cloud:
     gateway:
       default-filters:
         - AddResponseHeader=X-Response-Default-Foo, Default-Bar
       routes:
-        - { id: gateway_route, uri: lb://myservice1, predicates: [ Path=/actuator/gateway/** ] , order: 300 }
+        - { order: 200, id: gateway_circuit_breaker ,uri: "${test.uri}" , predicates: [Path=/circuitBreaker/open],
+            filters:
+              [{
+                name: CircuitBreaker,args:[{name: slowcmd , fallbackUri: foward:/rewrite}]
+              }]
+         }
+        - {  order: 200,  id: gateway_circuit_breaker_timeOut ,uri: "${ test.uri }" , predicates: [ Path=/circuitBreaker/delay/2 ],
+            filters:
+              [{
+                name: CircuitBreaker,args:[{name: timoutcmd }]
+              }]
+        }
+        - { id: gateway_route, uri: "${test.uri}", predicates: [ Path=/actuator/gateway/** ] , order: 300 }
         - { id: gateway_route_eureka, uri: lb://peer2, predicates: [ Path=/actuator/** ] , order: 400 }
         - { id: default_path_route,uri: lb://myservice1, predicates: [ Path=/** ] ,filters:["PrefixPath=/httpbin"], order: 500 }
     loadbalancer:
@@ -18,10 +32,15 @@ eureka:
   instance:
     virtual-host-name: gateway
     hostname: ${gateway}
+  client:
+    service-url: {defaultZone : 'http://${eureka}/eureka'}
 listinfo:
   list:
-    - { name: 'hcj',map: { key1: 'val1',key2: 'val2' },list: [ 'a','b' ] }
-    - { name: 'hcj2',map: { key3: 'val3',key4: 'val4' },list: [ 'c','d' ] }
+    - { name: 'hcj',map: { key1: 'val1',key2: 'val2' },
+        list: [ 'a','b' ],circuitBreakerList:[{name: 'slowcmd',fallbackUri: 'foward:/rewrite'}]
+      }
+    - { name: 'hcj2',map: { key3: 'val3',key4: 'val4' },list: [ 'c','d' ],circuitBreakerList:[{name: 'errorcmd',fallbackUri: 'foward:/errorPage'}]
+      }
     - name: Path
       map:
         key: val

@@ -1,0 +1,7 @@
+rootProject.name = 'Spring-Boot-all'
+
+include(':Actuator')
+findProject(':Actuator')?.name = 'Actuator'
+
+include(':Resilience4j')
+findProject(':Resilience4j')?.name = 'Resilience4j'

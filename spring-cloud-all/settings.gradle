@@ -21,3 +21,6 @@ findProject(':webFlux')?.name = 'webFlux'
 
 include(':gs-gateway')
 findProject(':gs-gateway')?.name = 'gs-gateway'
+
+include(':Cloud-Resilience4j')
+findProject(':Cloud-Resilience4j')?.name = 'Cloud-Resilience4j'

@@ -1,0 +1,37 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('com.jayway.awaitility:awaitility:1.7.0')
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot2:1.4.0'
+    implementation( 'org.springframework.boot:spring-boot-autoconfigure')
+    implementation( 'org.springframework.boot:spring-boot-starter-actuator')
+    implementation( 'org.springframework.boot:spring-boot-starter-web')
+}
+
+task hello {
+    doLast {
+        System.out.println('==parent:=' + parent?.name);
+        rootProject.allprojects.forEach( {
+            System.out.println('==1=' + it.name)
+        });
+    }
+}
+
+jar{
+    def d = UUID.randomUUID().toString();
+    archiveBaseName.set('actuatorApi-'+d)
+}
+test {
+    useJUnitPlatform()
+}

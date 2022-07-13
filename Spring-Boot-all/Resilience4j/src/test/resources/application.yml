@@ -1,0 +1,68 @@
+﻿resilience4j:
+  circuitbreaker:
+    tags: {tag1: tag1Value , tag2: tag2Value}
+    configs:
+      default:
+        waitDurationInOpenState: 10s
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED # recored the exception .
+        recordExceptions: [java.io.IOException,java.lang.RuntimeException]
+        permittedNumberOfCallsInHalfOpenState: 10
+        failureRateThreshold: 60
+        allowHealthIndicatorToFail: true
+        registerHealthIndicator: true
+        minimumNumberOfCalls: 10 # wait times  before cuculation error rate ,
+  timelimiter:
+    instances:
+      backendA:
+        timeoutDuration: PT11S
+        cancelRunningFuture: true
+    configs:
+      default:
+        timeoutDuration: PT2S
+  bulkhead:
+    configs:
+      default:
+        maxConcurrentCalls: 1
+    instances:
+      backendA:
+        baseConfig: default
+  thread-pool-bulkhead:
+    configs:
+      default:
+        maxThreadPoolSize: 1
+        coreThreadPoolSize: 1
+        queueCapacity: 1
+        keepAliveDuration: PT60S
+        eventConsumerBufferSize: 2
+  retry:
+    configs:
+      default:
+        waitDuration: PT2S
+        maxRetryAttempts: 3
+        retryExceptionPredicate: run.predicate.CustomRetryExceptionPredicate
+        resultPredicate: run.predicate.CustomResultPredicate
+  ratelimiter:
+    tags: {tag1: tag1Value , tag2: tag2Value}
+    configs:
+      default:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1s
+        subscribeForEvents: true
+        timeoutDuration: 0s
+    instances:
+      backendA:
+        baseConfig: default
+logging:
+  config: classpath:config/logback-boot.xml
+
+#      limitForPeriod: 10
+#      limitRefreshPeriod: 1s
+#      timeoutDuration: 0
+#      subscribeForEvents: true
+#      registerHealthIndicator: true
+#      allowHealthIndicatorToFail: false
+
+
+
+

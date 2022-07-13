@@ -18,6 +18,9 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation('org.springframework.cloud:spring-cloud-circuitbreaker-resilience4j:1.0.6.RELEASE')
+    implementation 'org.springframework.cloud:spring-cloud-circuitbreaker-spring-retry:1.0.6.RELEASE'
+
     implementation 'org.springframework.cloud:spring-cloud-config-client'
     implementation( 'org.springframework.boot:spring-boot-starter-actuator')
     implementation( 'org.springframework.cloud:spring-cloud-loadbalancer')
