@@ -33,6 +33,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.HandlerMapping;
+import org.springframework.web.server.WebFilter;
 import utils.Utils;
 
 import javax.validation.constraints.AssertTrue;
@@ -86,10 +88,21 @@ public class CustomGatewayApps {
         Assertions.assertTrue(env.contains("\"activeProfiles\":[\"peer2\"]"));
 
     }
+    @Autowired
+    List<WebFilter> webFilterList;
+    @Autowired
+    List<HandlerMapping> handlerMappings;
 
     @Test
     public void startUp() throws InterruptedException {
         Utils.print(applicationContext);
+        webFilterList.stream().forEach(webFilter -> {
+            log.info("{}",webFilter.toString());
+        });
+        log.info("==========================================");
+        handlerMappings.stream().forEach(handlerMapping -> {
+            log.info("{}",handlerMapping.toString());
+        });
         synchronized (lock){lock.wait();}
     }
     @Test

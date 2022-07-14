@@ -16,6 +16,7 @@ import org.springframework.cloud.gateway.config.GatewayProperties;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.route.Route;
+import org.springframework.cloud.gateway.support.TimeoutException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -35,6 +36,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_HANDLER_MAPPER_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 
 @Slf4j
@@ -47,20 +49,22 @@ public class RequestClientTest {
 
     @BeforeAll
     public static void setUp() {
-        buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.73:9090/").responseTimeout(Duration.ofHours(1)).build();
+        buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.72:9090/").responseTimeout(Duration.ofHours(1)).build();
     }
     Object lock = new Object();
     @Test
     public void requestLocalServiceWithCircuitBreakerToTimeOut(){
-        buildSimple.post().uri("/circuitBreaker/delay/2").header("HOST","www.circuitbreakertimeout.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
+        buildSimple.post().uri("/circuitBreaker/delay/2").header("Host","www.circuitbreakertimeout.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
             HttpStatus status = mapEntityExchangeResult.getStatus();
-            Assertions.assertTrue(status==SERVICE_UNAVAILABLE);
+            log.info("====={},{}",mapEntityExchangeResult.getResponseHeaders(),mapEntityExchangeResult.getResponseBody());
+            Assertions.assertTrue(status== GATEWAY_TIMEOUT);
         });
     }
     @Test
     public void requestLocalServiceWithCircuitBreaker(){
-        buildSimple.post().uri("/circuitBreaker/open").header("HOST","www.circuitbreaker.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
+        buildSimple.post().uri("/circuitBreaker/open").header("Host","www.circuitbreaker.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
             HttpStatus status = mapEntityExchangeResult.getStatus();
+            log.info("====={},{}",mapEntityExchangeResult.getResponseHeaders(),mapEntityExchangeResult.getResponseBody());
             Assertions.assertTrue(status==SERVICE_UNAVAILABLE);
         });
     }
