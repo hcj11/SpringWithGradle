@@ -178,7 +178,7 @@ public class CustomGatewayApps {
         @Order(500)
         @Bean
         public GatewayFilter captureResponse(){
-            return  (exchange, chain) -> {
+            return  (exchange, chain) -> { // GATEWAY_PREDICATE_ROUTE_ATTR
                 String value = exchange.getAttributeOrDefault(GATEWAY_HANDLER_MAPPER_ATTR,
                         "N/A");
                 if (!exchange.getResponse().isCommitted()) {

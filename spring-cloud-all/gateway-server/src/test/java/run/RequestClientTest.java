@@ -49,7 +49,7 @@ public class RequestClientTest {
 
     @BeforeAll
     public static void setUp() {
-        buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.72:9090/").responseTimeout(Duration.ofHours(1)).build();
+        buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.73:9090/").responseTimeout(Duration.ofHours(1)).build();
     }
     Object lock = new Object();
     @Test

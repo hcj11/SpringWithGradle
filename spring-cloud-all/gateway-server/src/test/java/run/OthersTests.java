@@ -13,22 +13,30 @@ import java.util.regex.Pattern;
 
 public class OthersTests {
     @Test
-    public void exgex(){
+    public void exgex() {
 //        /foo/(?<id>\d.*)  -> ${id}
-        String regex= "/foo/(?<id>\\d.*)";
-        String input ="/foo/123";
+        String regex = "/foo/(?<id>\\d.*)";
+        String input = "/foo/123";
         Pattern compile = Pattern.compile("/foo/(?<id>\\d.*)");
         Matcher matcher = compile.matcher("/foo/123");
         Assertions.assertTrue(matcher.find());
 
         String s = input.replaceAll(regex, "${id}");
-        Assertions.assertEquals(s,"123");
+        Assertions.assertEquals(s, "123");
 
 
     }
 
     @Test
+    public void antMatcherForHost() {
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        Assertions.assertTrue(antPathMatcher.match("**.circuitbreaker.org", "www.circuitbreaker.org"));
+
+    }
+
+    @Test
     public void antMatcher() {
+        // if (pathMatcher.match(pattern, host))
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         Assertions.assertFalse(antPathMatcher.match("/gateway/**", "/actuator/gateway/routes"));
         Assertions.assertFalse(antPathMatcher.match("/gateway/**", "actuator/gateway/routes"));
