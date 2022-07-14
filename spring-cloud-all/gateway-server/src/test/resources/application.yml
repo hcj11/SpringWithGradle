@@ -13,6 +13,12 @@ spring:
                 name: CircuitBreaker,args:{name: slowcmd , fallbackUri: forward:/rewrite}
               }]
          }
+        - { order: -1, id: gateway_circuit_breaker_no_fallback ,uri: "${test.uri2}" , predicates: [ { name: Host,args: { patterns: [ "**.circuitbreaker.org" ] } },{ name: Path, args: { patterns: [/circuitBreaker/open],matchOptionalTrailingSeparator: true} } ],
+            filters:
+              [ {
+                name: CircuitBreaker,args: { name: slowcmd }
+              } ]
+        }
         - {  order: -1,  id: gateway_circuit_breaker_timeOut ,uri: "${test.uri2}" , predicates: [{name: Host,args:{patterns:["**.circuitbreakertimeout.org"]}},{name: Path, args: {patterns:[/circuitBreaker/delay/2],matchOptionalTrailingSeparator: true}}],
             filters:
               [{
