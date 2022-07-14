@@ -13,7 +13,7 @@ spring:
                 name: CircuitBreaker,args:{name: slowcmd , fallbackUri: forward:/rewrite}
               }]
          }
-        - { order: -1, id: gateway_circuit_breaker_no_fallback ,uri: "${test.uri2}" , predicates: [ { name: Host,args: { patterns: [ "**.circuitbreaker.org" ] } },{ name: Path, args: { patterns: [/circuitBreaker/open],matchOptionalTrailingSeparator: true} } ],
+        - { order: -1, id: gateway_circuit_breaker_no_fallback ,uri: "${test.uri2}" , predicates: [ { name: Host,args: { patterns: [ "**.circuitbreaker.org" ] } },{ name: Path, args: { patterns: [/circuitBreaker/open/nofallback],matchOptionalTrailingSeparator: true} } ],
             filters:
               [ {
                 name: CircuitBreaker,args: { name: slowcmd }
