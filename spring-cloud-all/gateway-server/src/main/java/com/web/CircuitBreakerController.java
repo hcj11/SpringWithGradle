@@ -14,12 +14,8 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("circuitBreaker")
 public class CircuitBreakerController {
 
-//    @RequestMapping(value = "/delay/{integer}")
-    public void timeout(@PathVariable("integer") Integer integer){
-        log.info("wait {} seconds...",integer);
-        // gateway
-        Mono.delay(Duration.ofSeconds(integer));
-    }
+
+
 //    @RequestMapping(value = "/open")
     public void circuitBreakerOpen(){
         log.info("circuitBreakerOpen...");

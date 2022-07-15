@@ -1,12 +1,10 @@
 package com.web;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,9 +13,15 @@ import java.util.Map;
 @RequestMapping("httpbin")
 public class WebController {
 
-    @PostMapping("circuitbreaker")
-    public Mono<String> circuitbreaker(){
-        return Mono.just("circuitbreaker");
+    @RequestMapping(value = "/circuitBreaker/delay/{integer}",method = RequestMethod.POST)
+    public Mono<Map<String,String>> timeout(@PathVariable("integer") Integer integer){
+        log.info("wait {} seconds...",integer);
+        Map<String,String> map = new HashMap<String,String>(){
+            {
+                put("key","val");
+            }
+        };
+        return Mono.just(map).delayElement(Duration.ofSeconds(integer));
     }
 
     @PostMapping("/rewrite")

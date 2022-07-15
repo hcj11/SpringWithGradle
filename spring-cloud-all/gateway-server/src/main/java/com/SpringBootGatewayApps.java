@@ -10,10 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.RouteMatcher;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.server.HandlerFunction;
-import org.springframework.web.reactive.function.server.RequestPredicate;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.*;
 import reactor.core.publisher.Mono;
 import utils.Utils;
 
@@ -45,15 +42,22 @@ public class SpringBootGatewayApps {
                 .build();
     }
     @Bean
-    public RouterFunction routerFunction(){
-        return route(POST("circuitbreakertimeoutException"),handlerFunction());
+    public RouterFunction<ServerResponse> routerFunction(){
+        // HandlerFunction<T> handlerFunction todo test the uri . from webflux
+        return route(POST("/circuitbreakertimeoutException"),handlerFunction());
     }
 
-    public HandlerFunction handlerFunction(){
+    public HandlerFunction<ServerResponse> handlerFunction(){
         return (ServerRequest  request)->{
             Throwable throwable = (Throwable) request.attribute(CIRCUITBREAKER_EXECUTION_EXCEPTION_ATTR).orElse(null);
-            return Mono.just(throwable);
-        };
+            Mono<ServerResponse> build =null;
+            if(throwable!=null){
+                build =  ServerResponse.ok().header("exception",throwable.getMessage()).build();
+            }else{
+                build = ServerResponse.ok().header("exception", "nothing").build();
+            }
+            return build;
+        } ;
     }
 
     public static void main(String[] args) {

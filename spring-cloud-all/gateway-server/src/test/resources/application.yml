@@ -22,7 +22,7 @@ spring:
         - {  order: -1,  id: gateway_circuit_breaker_timeOut ,uri: "${test.uri2}" , predicates: [{name: Host,args:{patterns:["**.circuitbreakertimeout.org"]}},{name: Path, args: {patterns:[/circuitBreaker/delay/2],matchOptionalTrailingSeparator: true}}],
             filters:
               [{
-                name: CircuitBreaker,args:{name: circuitbreakertimeoutException, fallbackUri: forward:/circuitbreakertimeoutException }
+                name: CircuitBreaker,args:{name: circuitbreakertimeoutException, fallbackUri: forward:/circuitbreakertimeoutException}
               }]
         }
         - { id: gateway_route, uri: "${test.uri}", predicates: [ Path=/actuator/gateway/** ] , order: 300 }
