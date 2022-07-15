@@ -19,8 +19,9 @@ public class WebController {
     @CircuitBreaker(name = "default")
     @TimeLimiter(name = "backendA", fallbackMethod = "fallback")
     @RequestMapping(value = "timeout",method = RequestMethod.POST)
-    public CompletableFuture<Mono<String>> timeout(Map<String,String> flag) throws InterruptedException {
+    public CompletableFuture<Mono<String>> timeout(@RequestBody Map<String,String> flag) throws InterruptedException {
         // mock the network request,
+        log.info("param: {}",flag);
         if(flag.get("flag").equals("error")){
             throw new RuntimeException("intending");
         }
