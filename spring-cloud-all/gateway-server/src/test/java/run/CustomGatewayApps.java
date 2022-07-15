@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreaker;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
@@ -95,6 +96,11 @@ public class CustomGatewayApps {
 
     @Test
     public void startUp() throws InterruptedException {
+        try {
+            Class.forName("io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator");
+        } catch (ClassNotFoundException e) {
+            log.error("{}, class not found","io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator");
+        }
         Utils.print(applicationContext);
         webFilterList.stream().forEach(webFilter -> {
             log.info("{}",webFilter.toString());
@@ -195,7 +201,7 @@ public class CustomGatewayApps {
             };
         }
         @Bean
-        public Customizer<Resilience4JCircuitBreakerFactory> slowCoustomzier(){
+        public Customizer<ReactiveResilience4JCircuitBreakerFactory> slowCoustomzier(){
             return factory->{
                 factory.addCircuitBreakerCustomizer(circuitBreaker -> {circuitBreaker.transitionToForcedOpenState();},"slowcmd");
             };

@@ -5,10 +5,22 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.cloud.gateway.support.DefaultServerRequest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.util.RouteMatcher;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.server.HandlerFunction;
+import org.springframework.web.reactive.function.server.RequestPredicate;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import reactor.core.publisher.Mono;
 import utils.Utils;
+
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.CIRCUITBREAKER_EXECUTION_EXCEPTION_ATTR;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @SpringBootApplication
 public class SpringBootGatewayApps {
@@ -31,6 +43,17 @@ public class SpringBootGatewayApps {
                         .filters(f -> f.rewritePath("/foo/(?<segment>.*)", "/${segment}"))
                         .uri("http://httpbin.org"))
                 .build();
+    }
+    @Bean
+    public RouterFunction routerFunction(){
+        return route(POST("circuitbreakertimeoutException"),handlerFunction());
+    }
+
+    public HandlerFunction handlerFunction(){
+        return (ServerRequest  request)->{
+            Throwable throwable = (Throwable) request.attribute(CIRCUITBREAKER_EXECUTION_EXCEPTION_ATTR).orElse(null);
+            return Mono.just(throwable);
+        };
     }
 
     public static void main(String[] args) {

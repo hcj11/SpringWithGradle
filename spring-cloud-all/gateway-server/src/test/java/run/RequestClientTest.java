@@ -36,8 +36,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_HANDLER_MAPPER_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR;
-import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
-import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @Data
@@ -49,7 +48,7 @@ public class RequestClientTest {
 
     @BeforeAll
     public static void setUp() {
-        buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.73:9090/").responseTimeout(Duration.ofHours(1)).build();
+        buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.72:9090/").responseTimeout(Duration.ofHours(1)).build();
     }
     Object lock = new Object();
     @Test
@@ -60,9 +59,18 @@ public class RequestClientTest {
             Assertions.assertTrue(status== GATEWAY_TIMEOUT);
         });
     }
+//    @Test
+//    public void requestLocalServiceWithCircuitBreaker(){
+//        buildSimple.post().uri("/circuitBreaker/open").header("Host","www.circuitbreaker.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
+//            HttpStatus status = mapEntityExchangeResult.getStatus();
+//            HttpHeaders responseHeaders = mapEntityExchangeResult.getResponseHeaders();
+//            Assertions.assertEquals(responseHeaders.get("type"), "rewrite");
+//            Assertions.assertTrue(status==OK);
+//        });
+//    }
     @Test
-    public void requestLocalServiceWithCircuitBreaker(){
-        buildSimple.post().uri("/circuitBreaker/open").header("Host","www.circuitbreaker.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
+    public void requestLocalServiceWithCircuitBreakerAndNofallback(){
+        buildSimple.post().uri("/circuitBreaker/open/nofallback").header("Host","www.circuitbreaker.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
             HttpStatus status = mapEntityExchangeResult.getStatus();
             log.info("====={},{}",mapEntityExchangeResult.getResponseHeaders(),mapEntityExchangeResult.getResponseBody());
             Assertions.assertTrue(status==SERVICE_UNAVAILABLE);
