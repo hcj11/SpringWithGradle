@@ -48,18 +48,9 @@ public class RequestClientTest {
 
     @BeforeAll
     public static void setUp() {
-        buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.72:9090/").responseTimeout(Duration.ofHours(1)).build();
+        buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.73:9090/").responseTimeout(Duration.ofHours(1)).build();
     }
     Object lock = new Object();
-    // circuitbreakertimeoutException
-    @Test
-    public void requestLocalServiceThatIsFallbackUri(){
-        buildSimple.post().uri("/circuitbreakertimeoutException").exchange().expectBody(Map.class).consumeWith(
-                mapEntityExchangeResult -> {
-                    log.info("====={},{}",mapEntityExchangeResult.getResponseHeaders(),mapEntityExchangeResult.getResponseBody());
-                }
-        );
-    }
     @Test
     public void requestLocalServiceWithCircuitBreakerToTimeOut(){
         buildSimple.post().uri("/circuitBreaker/delay/2").header("Host","www.circuitbreakertimeout.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
@@ -69,23 +60,14 @@ public class RequestClientTest {
     }
     @Test
     public void requestLocalServiceWithCircuitBreakerFallbackForTimeOut(){
-        buildSimple.post().uri("/notfound").
+        buildSimple.post().uri("/get/map").
                 header("Host","www.circuitbreakertimeoutfallbackController.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
             HttpStatus status = mapEntityExchangeResult.getStatus();
             log.info("====={},{}",mapEntityExchangeResult.getResponseHeaders(),mapEntityExchangeResult.getResponseBody());
+            Assertions.assertEquals(mapEntityExchangeResult.getResponseHeaders().get("key1"), "val1" );
         });
     }
-    //
 
-//    @Test
-//    public void requestLocalServiceWithCircuitBreaker(){
-//        buildSimple.post().uri("/circuitBreaker/open").header("Host","www.circuitbreaker.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
-//            HttpStatus status = mapEntityExchangeResult.getStatus();
-//            HttpHeaders responseHeaders = mapEntityExchangeResult.getResponseHeaders();
-//            Assertions.assertEquals(responseHeaders.get("type"), "rewrite");
-//            Assertions.assertTrue(status==OK);
-//        });
-//    }
     @Test
     public void requestLocalServiceWithCircuitBreakerAndNofallback(){
         buildSimple.post().uri("/circuitBreaker/open/nofallback").header("Host","www.circuitbreaker.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
@@ -94,6 +76,7 @@ public class RequestClientTest {
             Assertions.assertTrue(status==SERVICE_UNAVAILABLE);
         });
     }
+
     @Test
     public void requestLocalService(){
         buildSimple.post().uri("/rewrite").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {

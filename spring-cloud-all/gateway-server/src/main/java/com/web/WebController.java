@@ -42,6 +42,15 @@ public class WebController {
         };
         return Mono.just(map);
     }
+    @RequestMapping("/get/map")
+    public Mono<Map<String, String>> getMap() {
+        Map<String, String> map = new HashMap<String, String>() {
+            {
+                put("key1", "val1");
+            }
+        };
+        return Mono.just(map);
+    }
 
     @RequestMapping("/get")
     public Mono<String> get(@RequestHeader Map<String, String> headers) {
