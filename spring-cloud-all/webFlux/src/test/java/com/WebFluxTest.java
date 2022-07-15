@@ -44,13 +44,17 @@ public class WebFluxTest {
     @BeforeAll
     public static void setUp(){
           webClient = WebClient.create("http://localhost:9090");
-         build = WebTestClient.bindToServer().baseUrl("http://localhost:9090/").build();
+          build = WebTestClient.bindToServer().baseUrl("http://localhost:9090/").build();
     }
     @Test
     public void getWebFilterListTest(){
         webFilterList.stream().forEach(webFilter -> {
             log.info("{}",webFilter.toString());
         });
+    }
+
+    @Test
+    public void forwardMachine(){
 
     }
     @Test
@@ -62,7 +66,7 @@ public class WebFluxTest {
                 .bodyToFlux(String.class);
 
         StepVerifier.create(stringFlux)
-                .expectNext("just so")
+                .expectNext("data:{\"scanAvailable\":true}")
                 .verifyComplete();
     }
     @Test

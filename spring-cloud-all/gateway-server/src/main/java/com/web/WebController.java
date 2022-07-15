@@ -6,7 +6,12 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.ExchangeFunction;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -18,6 +23,8 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping("httpbin")
 public class WebController {
+    @Autowired
+   private WebClient webClient;
 
     @Retry(name = "default")
     @RateLimiter(name = "default")
@@ -47,6 +54,17 @@ public class WebController {
         return CompletableFuture.completedFuture("recover from error...");
     }
 
+    @RequestMapping(value = "forward")
+    public void forward(){
+        // [] response  json?
+        webClient.get().uri("/").exchange().log().doOnNext(clientResponse -> {
+            Mono<String> mono = clientResponse.bodyToMono(String.class);
+            mono.doOnNext(s -> {
+                log.info("{}",s);
+            });
+        });
+
+    }
     @RequestMapping(value = "/circuitbreakerfallbackController2", method = RequestMethod.POST)
     public Mono<Map<String, String>> circuitbreakerfallbackController() {
         Map<String, String> map = new HashMap<String, String>() {
@@ -96,5 +114,11 @@ public class WebController {
             log.info("key:{},val:{}", key, value);
         });
         return Mono.just("hcj");
+    }
+
+    @RequestMapping("/get/list")
+    public Flux<Long> getList() {
+        Flux<Long> longFlux = Flux.interval(Duration.ofMillis(100)).take(2).onBackpressureBuffer(2);
+        return longFlux;
     }
 }

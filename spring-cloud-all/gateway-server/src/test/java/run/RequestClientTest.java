@@ -67,7 +67,7 @@ public class RequestClientTest {
         buildSimple.post().uri("/timeout").header("content-type", MediaType.APPLICATION_JSON_VALUE).body(Mono.just(map),Map.class).exchange().expectBody(String.class).consumeWith(stringEntityExchangeResult -> {
             String responseBody = stringEntityExchangeResult.getResponseBody();
             log.info(stringEntityExchangeResult.getResponseHeaders().toString());
-            Assertions.assertEquals(responseBody,"data:{\"scanAvailable\":true}");
+            Assertions.assertEquals(responseBody,"recover from error...");
         });
     }
     @Test

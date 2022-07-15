@@ -38,6 +38,7 @@ import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.HandlerMapping;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.WebFilter;
 import utils.Utils;
 
@@ -216,6 +217,11 @@ public class CustomGatewayApps {
                 }
                 return chain.filter(exchange);
             };
+        }
+        @Bean
+        public WebClient webClient(){
+            WebClient build = WebClient.builder().baseUrl("http://172.168.1.73:9090/").build();
+            return build;
         }
         @Bean
         public Customizer<ReactiveResilience4JCircuitBreakerFactory> slowCoustomzier(){
