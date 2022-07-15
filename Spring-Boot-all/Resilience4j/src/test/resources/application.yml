@@ -6,7 +6,7 @@
         waitDurationInOpenState: 10s
         slidingWindowSize: 10
         slidingWindowType: COUNT_BASED # recored the exception .
-        recordExceptions: [java.io.IOException,java.lang.RuntimeException]
+        recordExceptions: [java.io.IOException]
         permittedNumberOfCallsInHalfOpenState: 10
         failureRateThreshold: 60
         allowHealthIndicatorToFail: true

@@ -55,23 +55,24 @@ public class RequestClientTest {
         buildSimple = WebTestClient.bindToServer().baseUrl("http://172.168.1.73:9090/").responseTimeout(Duration.ofHours(1)).build();
     }
     Object lock = new Object();
+    //
     @Test
     public void requestForCircuitBreakerWithoutGatewayRoute(){
-        //
         Map map = new HashMap<String,String>(){
             {
-                put("flag","error");
+                put("flag","success");
                 put("wait-time","12000");
             }
         };
         buildSimple.post().uri("/timeout").header("content-type", MediaType.APPLICATION_JSON_VALUE).body(Mono.just(map),Map.class).exchange().expectBody(String.class).consumeWith(stringEntityExchangeResult -> {
             String responseBody = stringEntityExchangeResult.getResponseBody();
             log.info(stringEntityExchangeResult.getResponseHeaders().toString());
-            Assertions.assertEquals(responseBody,"timeout");
+            Assertions.assertEquals(responseBody,"data:{\"scanAvailable\":true}");
         });
     }
     @Test
     public void requestLocalServiceWithCircuitBreakerToTimeOut(){
+        // data:{"scanAvailable":true} ?
         buildSimple.post().uri("/circuitBreaker/delay/2").header("Host","www.circuitbreakertimeout.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
             HttpStatus status = mapEntityExchangeResult.getStatus();
             log.info("====={},{}",mapEntityExchangeResult.getResponseHeaders(),mapEntityExchangeResult.getResponseBody());

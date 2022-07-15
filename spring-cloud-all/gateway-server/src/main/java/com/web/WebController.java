@@ -1,6 +1,9 @@
 package com.web;
 
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +19,17 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("httpbin")
 public class WebController {
 
+    @Retry(name = "default")
+    @RateLimiter(name = "default")
+    @Bulkhead(name = "default",type = Bulkhead.Type.THREADPOOL)
     @CircuitBreaker(name = "default")
     @TimeLimiter(name = "backendA", fallbackMethod = "fallback")
     @RequestMapping(value = "timeout",method = RequestMethod.POST)
-    public CompletableFuture<Mono<String>> timeout(@RequestBody Map<String,String> flag) throws InterruptedException {
+    public CompletableFuture<String> timeout(@RequestBody Map<String,String> flag) throws InterruptedException {
         // mock the network request,
         log.info("param: {}",flag);
         if(flag.get("flag").equals("error")){
-            throw new RuntimeException("intending");
+            throw new RuntimeException("intending"); // throws excption as failure or success .
         }
         Integer waittime = Integer.valueOf(flag.get("wait-time"));
         return CompletableFuture.supplyAsync(() -> {
@@ -32,13 +38,13 @@ public class WebController {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    return Mono.just("timeout");
+                    return "timeout";
                 }
         );
     }
-    public CompletableFuture<Mono<String>> fallback(Map<String,String> flag,Throwable throwable) {
-        log.error("===============msg:{}",throwable.getMessage());
-        return CompletableFuture.completedFuture(Mono.just("recover from error..."));
+    public CompletableFuture<String> fallback(Map<String,String> flag,Throwable throwable) {
+        if(throwable!=null){    log.error("===============msg:{}",throwable.getMessage());}
+        return CompletableFuture.completedFuture("recover from error...");
     }
 
     @RequestMapping(value = "/circuitbreakerfallbackController2", method = RequestMethod.POST)

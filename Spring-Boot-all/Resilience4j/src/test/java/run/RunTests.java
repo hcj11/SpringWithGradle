@@ -92,13 +92,17 @@ public class RunTests {
         normal.error();
     }
     @Test
-    public void testForTimeLimitterThrowsError() throws InterruptedException, ExecutionException {
-        CompletableFuture slow = timeLimiterNormalForBackEnd.slow(9);
+    public void testForTimeLimitterAndCircuitBreakerThrowsError() throws InterruptedException, ExecutionException {
+        CompletableFuture slow = timeLimiterNormalForBackEnd.slow(null);
         Assertions.assertEquals(slow.get(), "slow");
-
     }
     @Test
-    public void justRunForOthersInstance() throws InterruptedException, ExecutionException {
+    public void testForTimeLimitter() throws InterruptedException, ExecutionException {
+        CompletableFuture slow = timeLimiterNormalForBackEnd.slow(9);
+        Assertions.assertEquals(slow.get(), "slow");
+    }
+    @Test
+    public void justRunTimeLimitterThrowsError() throws InterruptedException, ExecutionException {
         CompletableFuture slow = timeLimiterNormalForBackEnd.slow(12);
         Assertions.assertEquals(slow.get(), "Action is too slow");
     }
@@ -363,10 +367,15 @@ public class RunTests {
         public RateLimitConfig rateLimitConfig(){return new RateLimitConfig();}
     }
 
+    @CircuitBreaker(name = "default")
     @TimeLimiter(name = "backendA", fallbackMethod = "slowFallback")
     static class TimeLimiterNormalForBackEnd {
-        // only CompletableFuture
+        // only CompletableFuture java.lang.RuntimeException timeLimiter
         public CompletableFuture slow(Integer time) throws InterruptedException {
+            if(time==null){
+                throw new RuntimeException();
+            }
+            // RuntimeException
             return CompletableFuture.supplyAsync(() -> {
                 try {
                     Thread.sleep(time * 1000);
@@ -377,7 +386,7 @@ public class RunTests {
             });
         }
 
-        public CompletableFuture slowFallback(java.lang.Throwable throwable) {
+        public CompletableFuture slowFallback(Integer time,java.lang.Throwable throwable) {
             return CompletableFuture.completedFuture("Action is too slow");
         }
     }

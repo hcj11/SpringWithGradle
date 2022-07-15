@@ -21,15 +21,21 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import org.springframework.web.server.WebHandler;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.MediaType.TEXT_EVENT_STREAM;
+
 @Slf4j
 @SpringBootTest(classes = WebFluxTest.Dummy.class,webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,properties = {"server.port=9090"})
 public class WebFluxTest {
     static WebTestClient build =null;
+    static WebClient webClient =null;
     @Autowired
     GenericApplicationContext applicationContext;
     @Autowired
@@ -37,6 +43,7 @@ public class WebFluxTest {
 
     @BeforeAll
     public static void setUp(){
+          webClient = WebClient.create("http://localhost:9090");
          build = WebTestClient.bindToServer().baseUrl("http://localhost:9090/").build();
     }
     @Test
@@ -47,8 +54,33 @@ public class WebFluxTest {
 
     }
     @Test
-    public void get(){
+    public void verfiyCompletableFuture(){
+        Flux<String> stringFlux = webClient.get()
+                .uri("/get2")
+                .accept(TEXT_EVENT_STREAM)
+                .retrieve()
+                .bodyToFlux(String.class);
 
+        StepVerifier.create(stringFlux)
+                .expectNext("just so")
+                .verifyComplete();
+    }
+    @Test
+    public void get3(){
+        build.get().uri("/get3").exchange().expectBody(String.class).consumeWith(result -> {
+            String responseBody = result.getResponseBody();
+            Assertions.assertEquals(responseBody,"just so");
+        });
+    }
+    @Test
+    public void getAndReturnCompletableFuture(){
+        build.get().uri("/get2").exchange().expectBody(String.class).consumeWith(result -> {
+            String responseBody = result.getResponseBody();
+            Assertions.assertEquals(responseBody,"data:{\"scanAvailable\":true}");
+        });
+    }
+    @Test
+    public void get(){
 
         build.get().uri("/get").exchange().expectBody().consumeWith(result -> {
             HttpHeaders responseHeaders = result.getResponseHeaders();
