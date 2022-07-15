@@ -25,6 +25,12 @@ spring:
                 name: CircuitBreaker,args:{name: circuitbreakertimeoutException, fallbackUri: forward:/circuitbreakertimeoutException}
               }]
         }
+        - { order: -1,  id: gateway_circuit_breaker_timeOut_controller ,uri: "${test.uri2}" , predicates: [ { name: Host,args: { patterns: [ "**.circuitbreakerfallback.org" ] } } ],
+            filters:
+              [ {
+                name: CircuitBreaker,args: { name: circuitbreakertimeoutException, fallbackUri: forward:/circuitbreakerfallbackController }
+              } ]
+        }
         - { id: gateway_route, uri: "${test.uri}", predicates: [ Path=/actuator/gateway/** ] , order: 300 }
         - { id: gateway_route_eureka, uri: lb://peer2, predicates: [ Path=/actuator/** ] , order: 400 }
         - { id: default_path_route,uri: lb://myservice1, predicates: [ Path=/** ] ,filters:["PrefixPath=/httpbin"], order: 500 }

@@ -1,5 +1,7 @@
 package com;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -18,7 +20,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.C
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
-
+@Data
 @SpringBootApplication
 public class SpringBootGatewayApps {
 
@@ -27,6 +29,8 @@ public class SpringBootGatewayApps {
     public RestTemplate restTemplate(){
         return new RestTemplate();
     }
+    @Value("${test.uri}")
+    public String uri;
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
@@ -39,6 +43,12 @@ public class SpringBootGatewayApps {
                 .route("rewrite_route", r -> r.host("*.rewrite.org")
                         .filters(f -> f.rewritePath("/foo/(?<segment>.*)", "/${segment}"))
                         .uri("http://httpbin.org"))
+                .route("circuitbreakertimeoutfallbackController",r->r.host("**.circuitbreakertimeoutfallbackController.org")
+                        .filters(f->{return f.prefixPath("/httpbin").circuitBreaker(config -> {
+                            config.setFallbackUri("/circuitbreakerfallbackController2");
+                            config.setName("circuitbreakerfallbackController2");
+                        });})
+                        .uri(uri))
                 .build();
     }
     @Bean

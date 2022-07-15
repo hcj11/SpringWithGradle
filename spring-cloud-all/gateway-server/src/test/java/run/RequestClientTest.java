@@ -62,13 +62,21 @@ public class RequestClientTest {
     }
     @Test
     public void requestLocalServiceWithCircuitBreakerToTimeOut(){
-        // circuitbreakertimeoutException
         buildSimple.post().uri("/circuitBreaker/delay/2").header("Host","www.circuitbreakertimeout.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
             HttpStatus status = mapEntityExchangeResult.getStatus();
             log.info("====={},{}",mapEntityExchangeResult.getResponseHeaders(),mapEntityExchangeResult.getResponseBody());
-//            Assertions.assertTrue(status== GATEWAY_TIMEOUT);
         });
     }
+    @Test
+    public void requestLocalServiceWithCircuitBreakerFallbackForTimeOut(){
+        buildSimple.post().uri("/notfound").
+                header("Host","www.circuitbreakertimeoutfallbackController.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
+            HttpStatus status = mapEntityExchangeResult.getStatus();
+            log.info("====={},{}",mapEntityExchangeResult.getResponseHeaders(),mapEntityExchangeResult.getResponseBody());
+        });
+    }
+    //
+
 //    @Test
 //    public void requestLocalServiceWithCircuitBreaker(){
 //        buildSimple.post().uri("/circuitBreaker/open").header("Host","www.circuitbreaker.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
