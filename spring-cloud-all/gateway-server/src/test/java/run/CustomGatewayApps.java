@@ -105,7 +105,7 @@ public class CustomGatewayApps {
         TimeLimiter backendA = timeLimiterRegistry.timeLimiter("backendA");
         Assertions.assertEquals(backendA.getTimeLimiterConfig().getTimeoutDuration(),Duration.ofSeconds(11) );;
         CircuitBreaker aDefault = circuitBreakerRegistry.circuitBreaker("default");
-        Duration maxWaitDurationInHalfOpenState = aDefault.getCircuitBreakerConfig().getMaxWaitDurationInHalfOpenState();
+        Duration maxWaitDurationInHalfOpenState = aDefault.getCircuitBreakerConfig().getWaitDurationInOpenState();
         Assertions.assertEquals(maxWaitDurationInHalfOpenState,Duration.ofSeconds(10));
     }
 

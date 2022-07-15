@@ -52,6 +52,13 @@ public class RequestClientTest {
     }
     Object lock = new Object();
     @Test
+    public void requestForCircuitBreakerWithoutGatewayRoute(){
+        buildSimple.post().uri("timeout").exchange().expectBody(String.class).consumeWith(stringEntityExchangeResult -> {
+            String responseBody = stringEntityExchangeResult.getResponseBody();
+            Assertions.assertEquals(responseBody,"timeout");
+        });
+    }
+    @Test
     public void requestLocalServiceWithCircuitBreakerToTimeOut(){
         buildSimple.post().uri("/circuitBreaker/delay/2").header("Host","www.circuitbreakertimeout.org").exchange().expectBody(Map.class).consumeWith(mapEntityExchangeResult -> {
             HttpStatus status = mapEntityExchangeResult.getStatus();
