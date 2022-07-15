@@ -12,7 +12,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 @ImportAutoConfiguration(value = {autoconfiguration.org.mybatis.SubB.class, SubA.class})
 public class AutoConfigurationTest {
     @Test
-    public void SubAIsBetterThanSubBBecauseOfThePackageOrder(){
+    public void SubAIsBetterThanSubBBecauseOfThePackageOrder() {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.register(AutoConfiguration.class);
         context.registerBean("autoConfigurationTest", AutoConfigurationTest.class);

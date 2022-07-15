@@ -30,6 +30,6 @@ public class User {
      @TableId(type = IdType.ASSIGN_UUID)
      */
 
-    SFunction<User,String> sFunction = (User user)->{return "getName";};
+   final SFunction<User,String> sFunction = (User user)->{return "getName";};
 
 }

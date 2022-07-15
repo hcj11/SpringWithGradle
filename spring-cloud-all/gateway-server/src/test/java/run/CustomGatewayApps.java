@@ -1,5 +1,9 @@
 package run;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.timelimiter.TimeLimiter;
+import io.github.resilience4j.timelimiter.TimeLimiterRegistry;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -13,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreaker;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient;
@@ -94,8 +97,22 @@ public class CustomGatewayApps {
     @Autowired
     List<HandlerMapping> handlerMappings;
 
+    @Autowired
+    ReactiveResilience4JCircuitBreakerFactory circuitBreakerFactory;
+    private void checkConfigForCircuitBreaker(){
+        CircuitBreakerRegistry circuitBreakerRegistry = circuitBreakerFactory.getCircuitBreakerRegistry();
+        TimeLimiterRegistry timeLimiterRegistry = circuitBreakerFactory.getTimeLimiterRegistry();
+        TimeLimiter backendA = timeLimiterRegistry.timeLimiter("backendA");
+        Assertions.assertEquals(backendA.getTimeLimiterConfig().getTimeoutDuration(),Duration.ofSeconds(11) );;
+        CircuitBreaker aDefault = circuitBreakerRegistry.circuitBreaker("default");
+        Duration maxWaitDurationInHalfOpenState = aDefault.getCircuitBreakerConfig().getMaxWaitDurationInHalfOpenState();
+        Assertions.assertEquals(maxWaitDurationInHalfOpenState,Duration.ofSeconds(10));
+    }
+
     @Test
     public void startUp() throws InterruptedException {
+        checkConfigForCircuitBreaker();;
+
         try {
             Class.forName("io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator");
         } catch (ClassNotFoundException e) {
@@ -202,8 +219,9 @@ public class CustomGatewayApps {
         }
         @Bean
         public Customizer<ReactiveResilience4JCircuitBreakerFactory> slowCoustomzier(){
+
             return factory->{
-                factory.addCircuitBreakerCustomizer(circuitBreaker -> {circuitBreaker.transitionToForcedOpenState();},"slowcmd");
+                factory.addCircuitBreakerCustomizer(circuitBreaker -> {circuitBreaker.transitionToForcedOpenState(); },"slowcmd");
             };
         }
     }

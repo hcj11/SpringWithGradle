@@ -1,6 +1,7 @@
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.lang.Assert;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
 class SuperObjectTest{
     private String code;
 }
-
+@EqualsAndHashCode(callSuper=false)
 @SuperBuilder
 @Data
 public class Demo1Test extends SuperObjectTest {

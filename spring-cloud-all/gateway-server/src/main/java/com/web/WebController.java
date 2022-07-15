@@ -1,5 +1,8 @@
 package com.web;
 
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -12,6 +15,20 @@ import java.util.Map;
 @RestController
 @RequestMapping("httpbin")
 public class WebController {
+
+    @CircuitBreaker(name = "default")
+    @TimeLimiter(name = "backendA",fallbackMethod = "fallback")
+    @RequestMapping(value = "timeout")
+    public Mono<String> timeout() throws InterruptedException {
+        // mock the network request,
+        Thread.sleep(12 * 1000);
+        return Mono.just("timeout");
+    }
+
+    public Mono<String> fallback(Throwable throwable){
+        return Mono.just("recover from error...");
+    }
+
     @RequestMapping(value = "/circuitbreakerfallbackController2", method = RequestMethod.POST)
     public Mono<Map<String, String>> circuitbreakerfallbackController() {
         Map<String, String> map = new HashMap<String, String>() {
