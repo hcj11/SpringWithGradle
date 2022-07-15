@@ -1,5 +1,6 @@
 package run;
 
+import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -24,12 +25,15 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.client.RestTemplate;
+import reactor.core.publisher.Mono;
 import utils.Utils;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,8 +57,15 @@ public class RequestClientTest {
     Object lock = new Object();
     @Test
     public void requestForCircuitBreakerWithoutGatewayRoute(){
-        buildSimple.post().uri("timeout").exchange().expectBody(String.class).consumeWith(stringEntityExchangeResult -> {
+        //
+        Map map = new HashMap<String,String>(){
+            {
+                put("flag","error");
+            }
+        };
+        buildSimple.post().uri("/timeout").header("content-type", MediaType.APPLICATION_FORM_URLENCODED_VALUE).body(Mono.just(map),Map.class).exchange().expectBody(String.class).consumeWith(stringEntityExchangeResult -> {
             String responseBody = stringEntityExchangeResult.getResponseBody();
+            log.info(stringEntityExchangeResult.getResponseHeaders().toString());
             Assertions.assertEquals(responseBody,"timeout");
         });
     }

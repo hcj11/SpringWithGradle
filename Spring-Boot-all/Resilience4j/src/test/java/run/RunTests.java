@@ -91,11 +91,16 @@ public class RunTests {
     public void justRunThrowsError() throws InterruptedException {
         normal.error();
     }
+    @Test
+    public void testForTimeLimitterThrowsError() throws InterruptedException, ExecutionException {
+        CompletableFuture slow = timeLimiterNormalForBackEnd.slow(9);
+        Assertions.assertEquals(slow.get(), "slow");
 
+    }
     @Test
     public void justRunForOthersInstance() throws InterruptedException, ExecutionException {
-        CompletableFuture slow = timeLimiterNormalForBackEnd.slow();
-        Assertions.assertEquals(slow.get(), "slow");
+        CompletableFuture slow = timeLimiterNormalForBackEnd.slow(12);
+        Assertions.assertEquals(slow.get(), "Action is too slow");
     }
 
     @Test
@@ -360,10 +365,11 @@ public class RunTests {
 
     @TimeLimiter(name = "backendA", fallbackMethod = "slowFallback")
     static class TimeLimiterNormalForBackEnd {
-        public CompletableFuture slow() throws InterruptedException {
+        // only CompletableFuture
+        public CompletableFuture slow(Integer time) throws InterruptedException {
             return CompletableFuture.supplyAsync(() -> {
                 try {
-                    Thread.sleep(9000);
+                    Thread.sleep(time * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -382,7 +388,7 @@ public class RunTests {
 
             return CompletableFuture.supplyAsync(() -> {
                 try {
-                    Thread.sleep(9000);
+                    Thread.sleep(9000); // default =1s
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -1,6 +1,5 @@
 package com.web;
 
-import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +9,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
@@ -17,15 +17,25 @@ import java.util.Map;
 public class WebController {
 
     @CircuitBreaker(name = "default")
-    @TimeLimiter(name = "backendA",fallbackMethod = "fallback")
-    @RequestMapping(value = "timeout")
-    public Mono<String> timeout() throws InterruptedException {
+    @TimeLimiter(name = "backendA", fallbackMethod = "fallback")
+    @RequestMapping(value = "timeout",method = RequestMethod.POST)
+    public CompletableFuture<Mono<String>> timeout(@RequestParam("flag") String flag) throws InterruptedException {
         // mock the network request,
-        Thread.sleep(12 * 1000);
-        return Mono.just("timeout");
+        if(flag.equals("error")){
+            throw new RuntimeException("intending");
+        }
+        return CompletableFuture.supplyAsync(() -> {
+                    try {
+                        Thread.sleep(12 * 1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    return Mono.just("timeout");
+                }
+        );
     }
 
-    public Mono<String> fallback(Throwable throwable){
+    public Mono<String> fallback(Throwable throwable) {
         return Mono.just("recover from error...");
     }
 
@@ -59,6 +69,7 @@ public class WebController {
         };
         return Mono.just(map);
     }
+
     @RequestMapping("/get/map")
     public Mono<Map<String, String>> getMap() {
         Map<String, String> map = new HashMap<String, String>() {
