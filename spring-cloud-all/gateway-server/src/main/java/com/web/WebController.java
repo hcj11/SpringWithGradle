@@ -24,9 +24,10 @@ public class WebController {
         if(flag.get("flag").equals("error")){
             throw new RuntimeException("intending");
         }
+        Integer waittime = Integer.valueOf(flag.get("wait-time"));
         return CompletableFuture.supplyAsync(() -> {
                     try {
-                        Thread.sleep(12 * 1000);
+                        Thread.sleep(waittime);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -35,8 +36,8 @@ public class WebController {
         );
     }
 
-    public Mono<String> fallback(Throwable throwable) {
-        return Mono.just("recover from error...");
+    public CompletableFuture<Mono<String>> fallback(Throwable throwable,Map<String,String> flag) {
+        return CompletableFuture.completedFuture(Mono.just("recover from error..."));
     }
 
     @RequestMapping(value = "/circuitbreakerfallbackController2", method = RequestMethod.POST)
