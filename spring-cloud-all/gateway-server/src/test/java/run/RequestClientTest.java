@@ -61,6 +61,7 @@ public class RequestClientTest {
         Map map = new HashMap<String,String>(){
             {
                 put("flag","error");
+                put("wait-time","12000");
             }
         };
         buildSimple.post().uri("/timeout").header("content-type", MediaType.APPLICATION_JSON_VALUE).body(Mono.just(map),Map.class).exchange().expectBody(String.class).consumeWith(stringEntityExchangeResult -> {

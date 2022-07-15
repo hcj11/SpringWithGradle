@@ -35,8 +35,8 @@ public class WebController {
                 }
         );
     }
-
-    public CompletableFuture<Mono<String>> fallback(Throwable throwable,Map<String,String> flag) {
+    public CompletableFuture<Mono<String>> fallback(Map<String,String> flag,Throwable throwable) {
+        log.error("===============msg:{}",throwable.getMessage());
         return CompletableFuture.completedFuture(Mono.just("recover from error..."));
     }
 
