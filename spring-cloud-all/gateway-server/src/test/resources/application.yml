@@ -112,7 +112,7 @@ resilience4j:
         limitForPeriod: 10
         limitRefreshPeriod: 1s
         subscribeForEvents: true
-        timeoutDuration: 0s
+        timeoutDuration: 5s
     instances:
       backendA:
         baseConfig: default

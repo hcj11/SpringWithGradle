@@ -1,5 +1,6 @@
 package com.web;
 
+import com.google.common.collect.Lists;
 import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
@@ -11,11 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -54,17 +57,6 @@ public class WebController {
         return CompletableFuture.completedFuture("recover from error...");
     }
 
-    @RequestMapping(value = "forward")
-    public void forward(){
-        // [] response  json?
-        webClient.get().uri("/").exchange().log().doOnNext(clientResponse -> {
-            Mono<String> mono = clientResponse.bodyToMono(String.class);
-            mono.doOnNext(s -> {
-                log.info("{}",s);
-            });
-        });
-
-    }
     @RequestMapping(value = "/circuitbreakerfallbackController2", method = RequestMethod.POST)
     public Mono<Map<String, String>> circuitbreakerfallbackController() {
         Map<String, String> map = new HashMap<String, String>() {
@@ -116,9 +108,17 @@ public class WebController {
         return Mono.just("hcj");
     }
 
-    @RequestMapping("/get/list")
-    public Flux<Long> getList() {
-        Flux<Long> longFlux = Flux.interval(Duration.ofMillis(100)).take(2).onBackpressureBuffer(2);
-        return longFlux;
+    Flux<Long> longFlux = Flux.interval(Duration.ofMillis(500)).take(10).onBackpressureBuffer(10);
+    @RequestMapping("/get/list/interval")
+    public Flux<String> getList() {
+        String json = "{\"age\":%s}";
+        return  longFlux.map(l -> {
+            return String.format(json, l);
+        });
     }
+
+//    @RequestMapping("/get/list/delay")
+//    public Flux<String> getListWithDelay() {
+//        Flux<Long> longFlux = Flux.interval(Duration.ofMillis(500)).take(10).onBackpressureBuffer(10);
+//    }
 }
