@@ -31,7 +31,7 @@ public class WebController {
 
     @Retry(name = "default")
     @RateLimiter(name = "default")
-    @Bulkhead(name = "default",type = Bulkhead.Type.THREADPOOL)
+    @Bulkhead(name = "default",type = Bulkhead.Type.THREADPOOL) // when @Bulkhead(name) is equal then  use the same threadpool
     @CircuitBreaker(name = "default")
     @TimeLimiter(name = "backendA", fallbackMethod = "fallback")
     @RequestMapping(value = "timeout",method = RequestMethod.POST)

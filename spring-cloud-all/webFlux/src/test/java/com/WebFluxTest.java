@@ -61,9 +61,24 @@ public class WebFluxTest {
           build = WebTestClient.bindToServer().baseUrl("http://localhost:9090/").build();
     }
     @Test
-    public void forwardTestWithMultiMachine(){
+    public void forwardTestWithSingleMachineForward(){
+        Flux<Person> flux = WebFluxTest.remoteWebClient.get().uri("/get/list/interval")
+                .accept(MediaType.APPLICATION_JSON).retrieve().bodyToFlux(Person.class);
+        StepVerifier.create(flux).expectNext(
+                new Person(0),new Person(1),new Person(2),
+                new Person(3),new Person(4),new Person(5),
+                new Person(6),new Person(7),new Person(8),new Person(9)
+        ).verifyComplete();
+    }
+    // remoteWebClient
+    @Test
+    public void forwardTestWithMultiMachineForward(){
         Flux<Person> flux = WebFluxTest.webClient.get().uri("/forward")
                 .accept(MediaType.APPLICATION_JSON).retrieve().bodyToFlux(Person.class);
+        StepVerifier.create(flux).expectNext(new Person(0),new Person(1),
+                new Person(2),      new Person(3),new Person(4),new Person(5),
+                new Person(6),new Person(7),new Person(8),new Person(9)
+        ).verifyComplete();
 
     }
     @Test

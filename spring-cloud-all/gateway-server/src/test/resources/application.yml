@@ -6,6 +6,12 @@ spring:
     gateway:
       default-filters:
         - AddResponseHeader=X-Response-Default-Foo, Default-Bar
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter:
+              replenish-rate: 70 #
+              burst-capacity: 80 #  the bursttime is 80/70=1.   1/7 r/s
+              requested-tokens: 10 #
       routes: # don't use the lb  ,because  headers don't transmit  the key "host"
         - { order: -1, id: gateway_circuit_breaker ,uri: "${test.uri2}" , predicates: [{name: Host,args:{patterns:["**.circuitbreaker.org"]}},{name: Path, args: {patterns:[/circuitBreaker/open],matchOptionalTrailingSeparator: true}}],
             filters:
@@ -48,6 +54,7 @@ eureka:
   client:
     service-url: {defaultZone : 'http://${eureka}/eureka'}
 listinfo:
+  objectS: {name: 'hcj',age: 1 }
   list:
     - { name: 'hcj',map: { key1: 'val1',key2: 'val2' },
         list: [ 'a','b' ],circuitBreakerList:[{name: 'slowcmd',fallbackUri: 'foward:/rewrite'}]

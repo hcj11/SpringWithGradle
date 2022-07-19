@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.MonoProcessor;
 
 import java.time.Duration;
 import java.util.List;
@@ -58,7 +59,9 @@ public class WebController {
 
     @RequestMapping("/forward")
     public Flux<Person> forward(){
-        Flux<Person> personFlux = WebFluxTest.remoteWebClient.get().uri("/get/list/interval").accept(MediaType.APPLICATION_JSON)
+        // interval 500ms , take 10
+        Flux<Person> personFlux = WebFluxTest.remoteWebClient.get()
+                .uri("/get/list/interval").accept(MediaType.APPLICATION_JSON)
                 .retrieve().bodyToFlux(Person.class);
         return personFlux;
 
